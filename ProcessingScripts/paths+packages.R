@@ -8,6 +8,28 @@ require(hydroGOF)
 require(stringr)
 require(reshape2)
 
+## colors
+# from http://paletton.com/#uid=7000u0ktSlllysDruqa-qh2KKbE
+col.LD <- "#D01D1D"
+col.MD <- "#D06F1D"
+col.HD <- "#127D7D"
+col.elev <- "#18A718"
+col.ramp.rech <- colorRampPalette(c("#2D8989", "#003838"))(5)
+col.RCH10 <- col.ramp.rech[1]
+col.RCH50 <- col.ramp.rech[2]
+col.RCH100 <- col.ramp.rech[3]
+col.RCH500 <- col.ramp.rech[4]
+col.RCH1000  <- col.ramp.rech[5]
+
+
+# named vectors defining color strings
+pal.density <- c("LD"=col.LD, "MD"=col.MD, "HD"=col.HD)
+pal.topo <- c("FLAT"=col.LD, "ELEV"=col.elev)
+pal.recharge <- c("NORCH"=col.LD, "RCH10"=col.RCH10, "RCH50"=col.RCH50, "RCH100"=col.RCH100, "RCH500"=col.RCH500, "RCH1000"=col.RCH1000)
+
+## labels
+labels.recharge <- c("NORCH"="0", "RCH10"="10", "RCH50"="50", "RCH100"="100", "RCH500"="500", "RCH1000"="1000")
+
 ## paths
 # path to directory on GSAS with data
 dir.GSAS <- "Z:/2.active_projects/Zipper/2.Model_data/NanaimoAttributionMethods/"
