@@ -12,6 +12,15 @@ require(reshape2)
 # path to directory on GSAS with data
 dir.GSAS <- "Z:/2.active_projects/Zipper/2.Model_data/NanaimoAttributionMethods/"
 
+# path to Dropbox
+dir.drop <- "C:/Users/Sam/Dropbox/Work/"
+
+# path to plots
+dir.plot <- paste0(dir.drop, "StreamflowDepletion/Plots/NanaimoAttributionMethods/")
+
+# path to publication-quality figures
+dir.fig <- paste0(dir.git, "Figures+Tables/")
+
 ## functions from Gudmundsson et al. (2012) for modified version of KGE
 # eq. 5 - units of output from these will be same as input units of sim and obs
 #         the ideal value for each of these is 0.0

@@ -29,10 +29,10 @@ for (file in files.all){
   df.in$Well <- as.numeric(substring(df.in$Well, first=5))
   
   # melt to longform
-  df.in.melt <- melt(df.in, id=c("Well"), value.name="depletion.prc", variable.name="Zone")
+  df.in.melt <- melt(df.in, id=c("Well"), value.name="depletion.prc", variable.name="reach")
   
   # replace zone string with numeric
-  df.in.melt$Zone <- as.numeric(substring(df.in.melt$Zone, first=5))
+  df.in.melt$reach <- as.numeric(substring(df.in.melt$reach, first=5))
   
   # add relevant output data
   df.in.melt$drainage.density <- traits[1]
@@ -51,6 +51,10 @@ for (file in files.all){
   # status update
   print(paste0(file, " complete"))
 }
+
+# rename columns
+colnames(df.all)
+colnames(df.all)[1] <- "well"
 
 # save output
 write.csv(df.all, paste0(dir.git, "data/DepletionByWell_01_AggregateAllResults.csv"), row.names=F)
