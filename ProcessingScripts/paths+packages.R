@@ -7,6 +7,10 @@ require(ggplot2)
 require(hydroGOF)
 require(stringr)
 require(reshape2)
+require(raster)
+require(rgdal)
+require(rgeos)
+require(maptools)
 
 ## colors
 # from http://paletton.com/#uid=7000u0ktSlllysDruqa-qh2KKbE
