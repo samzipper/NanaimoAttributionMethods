@@ -50,22 +50,22 @@ dir.fig <- paste0(dir.git, "Figures+Tables/")
 ## functions from Gudmundsson et al. (2012) for modified version of KGE
 # eq. 5 - units of output from these will be same as input units of sim and obs
 #         the ideal value for each of these is 0.0
-fit.bias <- function(sim,obs){(mean(sim)-mean(obs))^2}
-fit.amp <- function(sim,obs){(sd(sim)-sd(obs))^2}
-fit.cor <- function(sim,obs){2*sd(sim)*sd(obs)*(1-cor(sim,obs))}
-MSE <- function(sim,obs){fit.bias(sim,obs)+fit.amp(sim,obs)+fit.cor(sim,obs)}   # this outputs slightly different results than mse() in the hydroGOF package
+MSE.bias <- function(sim,obs){(mean(sim)-mean(obs))^2}
+MSE.amp <- function(sim,obs){(sd(sim)-sd(obs))^2}
+MSE.cor <- function(sim,obs){2*sd(sim)*sd(obs)*(1-cor(sim,obs))}
+MSE <- function(sim,obs){MSE.bias(sim,obs)+MSE.amp(sim,obs)+MSE.cor(sim,obs)}   # this outputs slightly different results than mse() in the hydroGOF package
 
 # eq. 6 - the ideal value for each is 0.0,but these are normalized and will always sum to 1.0
-fit.bias.norm <- function(sim,obs){
-  fit.bias(sim,obs)/MSE(sim,obs)
+MSE.bias.norm <- function(sim,obs){
+  MSE.bias(sim,obs)/MSE(sim,obs)
 }
 
-fit.amp.norm <- function(sim,obs){
-  fit.amp(sim,obs)/MSE(sim,obs)
+MSE.amp.norm <- function(sim,obs){
+  MSE.amp(sim,obs)/MSE(sim,obs)
 }
 
-fit.cor.norm <- function(sim,obs){
-  fit.cor(sim,obs)/MSE(sim,obs)
+MSE.cor.norm <- function(sim,obs){
+  MSE.cor(sim,obs)/MSE(sim,obs)
 }
 
 ## ggplot theme

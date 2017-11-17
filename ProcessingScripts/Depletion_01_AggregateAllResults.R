@@ -1,4 +1,4 @@
-## DepletionByWell_01_AggregateAllResults.R
+## Depletion_01_AggregateAllResults.R
 #' This script is intended to aggregate streamflow depletion estimates for
 #' all drainage densities, topographies, recharge values, and models.
 #' 
@@ -14,7 +14,7 @@ dir.git <- "C:/Users/Sam/WorkGits/NanaimoAttributionMethods/"
 source(paste0(dir.git, "ProcessingScripts/paths+packages.R"))
 
 # list of all CSV files
-files.all <- list.files(paste0(dir.GSAS, "DepletionByWell/"))
+files.all <- list.files(paste0(dir.GSAS, "Results_Depletion/"))
 
 # load files
 start.flag <- T
@@ -23,7 +23,7 @@ for (file in files.all){
   traits <- str_split(tools::file_path_sans_ext(file), pattern="_", n=4, simplify=T)
   
   # load file
-  df.in <- read.csv(paste0(dir.GSAS, "DepletionByWell/", file))
+  df.in <- read.csv(paste0(dir.GSAS, "Results_Depletion/", file))
   
   # replace well string with numeric
   df.in$Well <- as.numeric(substring(df.in$Well, first=5))
@@ -57,4 +57,4 @@ colnames(df.all)
 colnames(df.all)[1] <- "well"
 
 # save output
-write.csv(df.all, paste0(dir.git, "data/DepletionByWell_01_AggregateAllResults.csv"), row.names=F)
+write.csv(df.all, paste0(dir.git, "data/Depletion_01_AggregateAllResults.csv"), row.names=F)
