@@ -4,6 +4,7 @@
 ## packages
 require(dplyr)
 require(ggplot2)
+require(ggtern)
 require(hydroGOF)
 require(stringr)
 require(reshape2)
@@ -11,6 +12,7 @@ require(raster)
 require(rgdal)
 require(rgeos)
 require(maptools)
+require(gridExtra)
 
 ## colors
 # from http://paletton.com/#uid=7000u0ktSlllysDruqa-qh2KKbE
@@ -42,7 +44,7 @@ dir.GSAS <- "Z:/2.active_projects/Zipper/2.Model_data/NanaimoAttributionMethods/
 dir.drop <- "C:/Users/Sam/Dropbox/Work/"
 
 # path to plots
-dir.plot <- paste0(dir.drop, "StreamflowDepletion/Plots/NanaimoAttributionMethods/")
+dir.plot <- paste0(dir.drop, "StreamflowDepletion/NanaimoAttributionMethods/Plots/")
 
 # path to publication-quality figures
 dir.fig <- paste0(dir.git, "Figures+Tables/")
@@ -51,17 +53,17 @@ dir.fig <- paste0(dir.git, "Figures+Tables/")
 # eq. 5 - units of output from these will be same as input units of sim and obs
 #         the ideal value for each of these is 0.0
 MSE.bias <- function(sim,obs){(mean(sim)-mean(obs))^2}
-MSE.amp <- function(sim,obs){(sd(sim)-sd(obs))^2}
+MSE.var <- function(sim,obs){(sd(sim)-sd(obs))^2}
 MSE.cor <- function(sim,obs){2*sd(sim)*sd(obs)*(1-cor(sim,obs))}
-MSE <- function(sim,obs){MSE.bias(sim,obs)+MSE.amp(sim,obs)+MSE.cor(sim,obs)}   # this outputs slightly different results than mse() in the hydroGOF package
+MSE <- function(sim,obs){MSE.bias(sim,obs)+MSE.var(sim,obs)+MSE.cor(sim,obs)}   # this outputs slightly different results than mse() in the hydroGOF package
 
 # eq. 6 - the ideal value for each is 0.0,but these are normalized and will always sum to 1.0
 MSE.bias.norm <- function(sim,obs){
   MSE.bias(sim,obs)/MSE(sim,obs)
 }
 
-MSE.amp.norm <- function(sim,obs){
-  MSE.amp(sim,obs)/MSE(sim,obs)
+MSE.var.norm <- function(sim,obs){
+  MSE.var(sim,obs)/MSE(sim,obs)
 }
 
 MSE.cor.norm <- function(sim,obs){
