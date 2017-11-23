@@ -101,23 +101,25 @@ p.depletion.diff.hist <-
 ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.diff.hist.png"),
        p.depletion.diff.hist, width=8, height=4, units="in")
 
-p.depletion.diff.hist.noZeros <-
+p.depletion.diff.dens.noZeros <-
   ggplot(subset(df.prc, topography=="FLAT" & recharge=="NORCH"), aes(x=depletion.diff.prc, fill=method, color=method)) +
   geom_density(alpha=0.2) +
   geom_vline(xintercept=0) +
   facet_wrap(~drainage.density, scales="free_y") +
   scale_x_continuous(name="Analytical - MODFLOW [% of Total Depletion]") +
-  scale_fill_discrete() +
+  scale_fill_manual(values=pal.method) +
+  scale_color_manual(values=pal.method) +
   theme_scz() +
   theme(legend.position="bottom")
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.diff.hist.noZeros.png"),
-       p.depletion.diff.hist.noZeros, width=8, height=4, units="in")
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.diff.dens.noZeros.png"),
+       p.depletion.diff.dens.noZeros, width=8, height=4, units="in")
 
 p.fit.ByScenario.tern <-
   ggtern(subset(df.fit.ByScenario, recharge=="NORCH" & topography=="FLAT"), 
-         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=KGE.overall, color=method, shape=drainage.density)) +
-  geom_point() +
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method, shape=drainage.density)) +
+  geom_point(alpha=0.75) +
   labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
+  scale_color_manual(values=pal.method) +
   theme_rgbw() +
   theme(tern.axis.title=element_blank(),
         tern.panel.grid.major=element_blank())
@@ -126,10 +128,11 @@ ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.fit.ByScenario.tern.png"
 
 p.fit.ByScenario.tern.facet <-
   ggtern(subset(df.fit.ByScenario, recharge=="NORCH" & topography=="FLAT"), 
-         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=KGE.overall, color=method)) +
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method)) +
   geom_point() +
   facet_wrap(~drainage.density) +
   labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
+  scale_color_manual(values=pal.method) +
   theme_rgbw() +
   theme(tern.axis.title=element_blank(),
         tern.panel.grid.major=element_blank(),
@@ -150,11 +153,12 @@ p.fit.ByWell.tern <-
 p.ByScenario.scatter <-
   ggplot(subset(df.prc, topography=="FLAT" & recharge=="NORCH"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
   geom_abline(slope=1, intercept=0) +
-  geom_point() +
+  geom_point(shape=21) +
   stat_smooth(method="lm") +
   facet_wrap(~drainage.density) +
-  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", limits=c(0,100), breaks=seq(0,100,25)) +
-  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", limits=c(0,100), breaks=seq(0,100,25)) +
+  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_color_manual(values=pal.method) +
   theme_scz() +
   theme(legend.position="bottom")
 ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.scatter.png"),
@@ -210,3 +214,4 @@ p.fit.recharge <-
   theme(legend.position="bottom")
 ggsave(paste0(dir.plot, "DepletionByWell_02_FitByReach_p.fit.recharge.png"),
        p.fit.recharge, width=8, height=6, units="in")
+

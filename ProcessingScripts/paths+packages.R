@@ -27,11 +27,18 @@ col.RCH100 <- col.ramp.rech[3]
 col.RCH500 <- col.ramp.rech[4]
 col.RCH1000  <- col.ramp.rech[5]
 
+# from http://colorbrewer2.org/#type=qualitative&scheme=Dark2&n=5
+col.TP <- "#1b9e77"
+col.ID <- "#d95f02"
+col.ID2 <- "#7570b3"
+col.WID <- "#e7298a"
+col.WID2 <- "#66a61e"
 
 # named vectors defining color strings
 pal.density <- c("LD"=col.LD, "MD"=col.MD, "HD"=col.HD)
 pal.topo <- c("FLAT"=col.LD, "ELEV"=col.elev)
 pal.recharge <- c("NORCH"=col.LD, "RCH10"=col.RCH10, "RCH50"=col.RCH50, "RCH100"=col.RCH100, "RCH500"=col.RCH500, "RCH1000"=col.RCH1000)
+pal.method <- c("THIESSEN"=col.TP, "IDLIN"=col.ID, "IDLINSQ"=col.ID2, "WEBLIN"=col.WID, "WEBLINSQ"=col.WID2)
 
 ## labels
 labels.recharge <- c("NORCH"="0", "RCH10"="10", "RCH50"="50", "RCH100"="100", "RCH500"="500", "RCH1000"="1000")
