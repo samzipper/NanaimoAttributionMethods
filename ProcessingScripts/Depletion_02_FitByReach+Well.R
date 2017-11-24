@@ -547,3 +547,89 @@ ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.byReach.png"),
                                        axis.ticks=element_blank(), strip.background=element_blank()),
                    ncol=1, heights=c(1, 0.7, 0.7)),
        width=12, height=8)
+
+#### Elevation sensitivity analysis ####
+
+p.elev.ByScenario.scatter <-
+  ggplot(subset(df.prc, drainage.density=="LD" & recharge=="NORCH"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
+  geom_abline(slope=1, intercept=0) +
+  geom_point(shape=21) +
+  stat_smooth(method="lm") +
+  facet_wrap(~topography) +
+  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_color_manual(values=pal.method) +
+  theme_scz()
+
+p.elev.depletion.diff.dens.noZeros <-
+  ggplot(subset(df.prc, drainage.density=="LD" & recharge=="NORCH"), aes(x=depletion.diff.prc, fill=method, color=method)) +
+  geom_density(alpha=0.2) +
+  geom_vline(xintercept=0) +
+  facet_wrap(~topography, scales="free_y") +
+  scale_x_continuous(name="Analytical - MODFLOW [% of Total Depletion]") +
+  scale_fill_manual(values=pal.method) +
+  scale_color_manual(values=pal.method) +
+  theme_scz()
+
+p.elev.fit.ByScenario.tern.facet <-
+  ggtern(subset(df.fit.ByScenario, drainage.density=="LD" & recharge=="NORCH"), 
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method)) +
+  geom_point() +
+  facet_wrap(~topography) +
+  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
+  scale_color_manual(values=pal.method) +
+  theme_rgbw() +
+  theme(tern.axis.title=element_blank(),
+        tern.panel.grid.major=element_blank(),
+        legend.position="bottom")
+
+# save output
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.elev.fit.png"),
+       ggtern::arrangeGrob(p.elev.ByScenario.scatter,
+                   p.elev.depletion.diff.dens.noZeros, 
+                   p.elev.fit.ByScenario.tern.facet,
+                   ncol=1, heights=c(0.75, 0.75, 1)),
+       width=6, height=12)
+
+#### Recharge sensitivity analysis ####
+
+p.recharge.ByScenario.scatter <-
+  ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
+  geom_abline(slope=1, intercept=0) +
+  geom_point(shape=21) +
+  stat_smooth(method="lm") +
+  facet_wrap(~recharge, ncol=6) +
+  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_color_manual(values=pal.method) +
+  theme_scz()
+
+p.recharge.depletion.diff.dens.noZeros <-
+  ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV"), aes(x=depletion.diff.prc, fill=method, color=method)) +
+  geom_density(alpha=0.2) +
+  geom_vline(xintercept=0) +
+  facet_wrap(~recharge, scales="free_y", ncol=6) +
+  scale_x_continuous(name="Analytical - MODFLOW [% of Total Depletion]") +
+  scale_fill_manual(values=pal.method) +
+  scale_color_manual(values=pal.method) +
+  theme_scz()
+
+p.recharge.fit.ByScenario.tern.facet <-
+  ggtern(subset(df.fit.ByScenario, drainage.density=="LD" & topography=="ELEV"), 
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method)) +
+  geom_point() +
+  facet_wrap(~recharge, ncol=6) +
+  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
+  scale_color_manual(values=pal.method) +
+  theme_rgbw() +
+  theme(tern.axis.title=element_blank(),
+        tern.panel.grid.major=element_blank(),
+        legend.position="bottom")
+
+# save output
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.recharge.fit.png"),
+       ggtern::arrangeGrob(p.recharge.ByScenario.scatter + theme(legend.position="bottom"),
+                           p.recharge.depletion.diff.dens.noZeros + theme(legend.position="bottom"), 
+                           p.recharge.fit.ByScenario.tern.facet + theme(legend.position="bottom"),
+                           ncol=1, heights=c(0.75, 0.6, 1)),
+       width=14, height=10)
