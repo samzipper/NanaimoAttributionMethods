@@ -24,7 +24,7 @@ prc.thres <- 5  # Reeves et al. (2009) used 5%
 df.all <- read.csv(paste0(dir.git, "data/Depletion_01_AggregateAllResults.csv"))
 
 # set factor levels
-df.all$drainage.density <- factor(df.all$drainage.density, levels=c("LD", "MD", "HD"))
+df.all$drainage.density <- factor(df.all$drainage.density, levels=c("HD", "MD", "LD"))
 df.all$topography <- factor(df.all$topography, levels=c("FLAT", "ELEV"))
 df.all$recharge <- factor(df.all$recharge, levels=c("NORCH", "RCH10", "RCH50", "RCH100", "RCH500", "RCH1000"))
 df.all$method <- factor(df.all$method, levels=c("MODFLOW", "THIESSEN", "IDLIN", "IDLINSQ", "WEBLIN", "WEBLINSQ"))
@@ -73,11 +73,18 @@ df.fit.ByWell <- summarize(group_by(df.prc, well, drainage.density, topography, 
 # fit is calculated for each scenario based on all reach + well combos
 df.fit.ByScenario <- summarize(group_by(df.prc, drainage.density, topography, recharge, method),
                                n.reach = sum(is.finite(depletion.prc)),
+                               cor = cor(depletion.prc, depletion.prc.modflow, method="pearson"),
+                               R2 = R2(depletion.prc.modflow,depletion.prc),
                                MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
                                MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
                                MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
                                MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
                                KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
+
+## table
+df.fit.table <- dcast(df.fit.ByScenario[,c("drainage.density", "topography", "recharge", "method", "KGE.overall")],
+                      drainage.density + topography + recharge ~ method, value.var="KGE.overall")
+df.fit.table[,4:8] <- round(df.fit.table[,4:8], 3)
 
 ## plots
 # overview of data
@@ -174,6 +181,20 @@ p.ByScenario.scatter <-
   theme(legend.position="bottom")
 ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.scatter.png"),
        p.ByScenario.scatter, width=8, height=4, units="in")
+
+p.ByScenario.sensitivity.scatter <-
+  ggplot(subset(df.prc, topography=="ELEV" & drainage.density=="LD"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
+  geom_abline(slope=1, intercept=0) +
+  geom_point(shape=21) +
+  stat_smooth(method="lm") +
+  facet_wrap(~recharge) +
+  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]") +
+  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]") +
+  scale_color_manual(values=pal.method) +
+  theme_scz() +
+  theme(legend.position="bottom")
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.sensitivity.scatter.png"),
+       p.ByScenario.sensitivity.scatter, width=8, height=6, units="in")
 
 ## comparing fit across different drainage densities (figure 4 in Tom D report)
 df.fit.density <- melt(subset(df.fit.ByReach, topography=="FLAT" & recharge=="NORCH"), id=c("reach", "drainage.density", "topography", "recharge", "method"),
@@ -586,10 +607,33 @@ p.elev.fit.ByScenario.tern.facet <-
 # save output
 ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.elev.fit.png"),
        ggtern::arrangeGrob(p.elev.ByScenario.scatter,
-                   p.elev.depletion.diff.dens.noZeros, 
-                   p.elev.fit.ByScenario.tern.facet,
-                   ncol=1, heights=c(0.75, 0.75, 1)),
+                           p.elev.depletion.diff.dens.noZeros, 
+                           p.elev.fit.ByScenario.tern.facet,
+                           ncol=1, heights=c(0.75, 0.75, 1)),
        width=6, height=12)
+
+# plot elev diff vs flat diff
+df.elev.diff <- subset(df.prc, drainage.density=="LD" & recharge=="NORCH")[,c("well", "reach", "topography", "method", "depletion.diff.prc")]
+df.elev.diff <- dcast(df.elev.diff, well+reach+method ~ topography, value.var="depletion.diff.prc")
+p.elev.diff.ByScenario.scatter <-
+  ggplot(df.elev.diff, aes(x=FLAT, y=ELEV, color=method)) +
+  geom_abline(slope=1, intercept=0) +
+  geom_point(shape=21) +
+  stat_smooth(method="lm") +
+  scale_x_continuous(name="Analyical-MODFLOW [%], FLAT") +
+  scale_y_continuous(name="Analyical-MODFLOW [%], ELEV") +
+  scale_color_manual(values=pal.method) +
+  theme_scz()
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.elev.diff.ByScenario.scatter.png"),
+       p.elev.diff.ByScenario.scatter,
+       width=6, height=6)
+
+# stats
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="THIESSEN")))
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="IDLIN")))
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="IDLINSQ")))
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="WEBLIN")))
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="WEBLINSQ")))
 
 #### Recharge sensitivity analysis ####
 

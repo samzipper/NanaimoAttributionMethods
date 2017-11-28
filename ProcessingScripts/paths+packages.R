@@ -91,6 +91,13 @@ MSE.cor.norm <- function(sim,obs){
   MSE.cor(sim,obs)/MSE(sim,obs)
 }
 
+# R2
+R2 <- function(sim, obs) {
+  if (length(sim) != length(obs)) stop("vectors not the same size")
+  return((sum((obs-mean(obs))*(sim-mean(sim)))/
+            ((sum((obs-mean(obs))^2)^0.5)*(sum((sim-mean(sim))^2)^0.5)))^2)
+}
+
 ## ggplot theme
 theme_scz <- function(...){
   theme_bw() + 
