@@ -73,9 +73,16 @@ dir.fig <- paste0(dir.git, "Figures+Tables/")
 ## functions from Gudmundsson et al. (2012) for modified version of KGE
 # eq. 5 - units of output from these will be same as input units of sim and obs
 #         the ideal value for each of these is 0.0
+sd.p <- function(x){sqrt((length(x)-1)/length(x))*sd(x)}  # from https://stackoverflow.com/questions/44339070/calculating-population-standard-deviation-in-r
 MSE.bias <- function(sim,obs){(mean(sim)-mean(obs))^2}
-MSE.var <- function(sim,obs){(sd(sim)-sd(obs))^2}
-MSE.cor <- function(sim,obs){2*sd(sim)*sd(obs)*(1-cor(sim,obs))}
+MSE.var <- function(sim,obs){(sd.p(sim)-sd.p(obs))^2}
+MSE.cor <- function(sim,obs){
+  if (sd(obs)==0 | sd(sim)==0){
+    0 
+  } else {
+    2*sd.p(sim)*sd.p(obs)*(1-cor(sim,obs))
+  }
+}
 MSE <- function(sim,obs){MSE.bias(sim,obs)+MSE.var(sim,obs)+MSE.cor(sim,obs)}   # this outputs slightly different results than mse() in the hydroGOF package
 
 # eq. 6 - the ideal value for each is 0.0,but these are normalized and will always sum to 1.0
