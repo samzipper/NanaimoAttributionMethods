@@ -23,22 +23,71 @@ prc.thres <- 5  # Reeves et al. (2009) used 5%
 ## load data
 df.all <- read.csv(paste0(dir.git, "data/Depletion_01_AggregateAllResults.csv"))
 
-# set factor levels
-df.all$drainage.density <- factor(df.all$drainage.density, levels=c("HD", "MD", "LD"))
-df.all$topography <- factor(df.all$topography, levels=c("FLAT", "ELEV"))
-df.all$recharge <- factor(df.all$recharge, levels=c("NORCH", "RCH10", "RCH50", "RCH100", "RCH500", "RCH1000"))
-df.all$method <- factor(df.all$method, levels=c("MODFLOW", "THIESSEN", "IDLIN", "IDLINSQ", "WEBLIN", "WEBLINSQ"))
-
-# cut depletion data into categories
-df.all$depletion.prc.class <- cut(df.all$depletion.prc, 
-                                  breaks=c(min(df.all$depletion.prc),5,10,15,20,max(df.all$depletion.prc)),
-                                  labels=c("<5%", "5-10%", "10-15%", "15-20%",">20%"))
+# make a wide-format version
+df.wide <- dcast(subset(df.all, topography=="FLAT" & drainage.density=="LD"), drainage.density+well+reach+topography+recharge~method, value.var="depletion.prc")
 
 # check depletion to make sure things sum to 100
 df.depletion.byWell <- dplyr::summarize(group_by(df.all, well, drainage.density, topography, recharge, method),
                                         depletion.prc.sum = sum(depletion.prc))
-
 # wells near edges often don't sum to 100, especially for Thiessen and MODFLOW methods
+
+# load and prep map data
+## load and prep data
+# load data
+shp.LD.boundary <- readOGR(paste0(dir.GSAS, "GIS"), layer="LD_boundary_aquifer")
+shp.LD.streams <- readOGR(paste0(dir.GSAS, "GIS"), layer="LD_streams")
+df.LD.wells <- read.csv(paste0(dir.GSAS, "GIS/LD_wells_info.csv"), stringsAsFactors=F)
+
+shp.MD.boundary <- readOGR(paste0(dir.GSAS, "GIS"), layer="MD_boundary_aquifer")
+shp.MD.streams <- readOGR(paste0(dir.GSAS, "GIS"), layer="MD_streams")
+shp.MD.wells <- readOGR(paste0(dir.GSAS, "GIS"), layer="MD_wells")
+
+shp.HD.boundary <- readOGR(paste0(dir.GSAS, "GIS"), layer="HD_boundary_aquifer")
+shp.HD.streams <- readOGR(paste0(dir.GSAS, "GIS"), layer="HD_streams")
+df.HD.wells <- read.csv(paste0(dir.GSAS, "GIS/HD_wells_info.csv"), stringsAsFactors=F)
+
+# tidy spatial data for ggplot
+df.LD.boundary <- tidy(shp.LD.boundary)
+df.LD.streams <- tidy(shp.LD.streams)
+
+df.MD.boundary <- tidy(shp.MD.boundary)
+df.MD.streams <- tidy(shp.MD.streams)
+df.MD.wells <- as.data.frame(shp.MD.wells)
+
+df.HD.boundary <- tidy(shp.HD.boundary)
+df.HD.streams <- tidy(shp.HD.streams)
+
+# set up reach and well columns to match df.all
+df.LD.wells$well <- as.numeric(substring(df.LD.wells$Well_Name, 8))
+df.LD.streams$reach <- as.numeric(df.LD.streams$id)+2
+
+df.MD.wells$well <- as.numeric(substring(df.MD.wells$Well_Name, 8))
+df.MD.streams$reach <- as.numeric(df.MD.streams$id)+2
+
+df.HD.wells$well <- as.numeric(substring(df.HD.wells$Well_Name, 8))
+df.HD.streams$reach <- as.numeric(df.HD.streams$id)+2
+
+# extract stream length for each reach
+df.LD.stream.length <- data.frame(reach = seq(2,63),
+                                  length.km = shp.LD.streams@data$Length,
+                                  drainage.density="LD")
+df.LD.stream.length$length.km.tercile <- cut(df.LD.stream.length$length.km, 
+                                             quantile(df.LD.stream.length$length.km, c(0, 0.33, 0.66, 1)),
+                                             labels=c("shortest", "middle", "longest"), include.lowest=T)
+
+df.MD.stream.length <- data.frame(reach = seq(2,63),
+                                  length.km = shp.MD.streams@data$STE_LE,
+                                  drainage.density="MD")
+df.MD.stream.length$length.km.tercile <- cut(df.MD.stream.length$length.km, 
+                                             quantile(df.MD.stream.length$length.km, c(0, 0.33, 0.66, 1)),
+                                             labels=c("shortest", "middle", "longest"), include.lowest=T)
+
+df.HD.stream.length <- data.frame(reach = seq(2,63),
+                                  length.km = shp.HD.streams@data$Length,
+                                  drainage.density="HD")
+df.HD.stream.length$length.km.tercile <- cut(df.HD.stream.length$length.km, 
+                                             quantile(df.HD.stream.length$length.km, c(0, 0.33, 0.66, 1)),
+                                             labels=c("shortest", "middle", "longest"), include.lowest=T)
 
 # extract MODFLOW data and make it a column of its own in 'df' data frame
 df.mod <- subset(df.all, method=="MODFLOW")
@@ -48,27 +97,38 @@ df.mod$method <- NULL
 df <- left_join(df, df.mod)
 df$depletion.diff.prc <- df$depletion.prc - df$depletion.prc.modflow  # analytical - MODFLOW; positive means analytical overpreedicts
 
+# add reach length to df
+df <- left_join(df, rbind(df.LD.stream.length, df.MD.stream.length, df.HD.stream.length), by=c("reach", "drainage.density"))
+
+# set factor levels
+df$drainage.density <- factor(df$drainage.density, levels=c("HD", "MD", "LD"))
+df$topography <- factor(df$topography, levels=c("FLAT", "ELEV"))
+df$recharge <- factor(df$recharge, levels=c("NORCH", "RCH10", "RCH50", "RCH100", "RCH500", "RCH1000"))
+df$method <- factor(df$method, levels=c("MODFLOW", "THIESSEN", "IDLIN", "IDLINSQ", "WEBLIN", "WEBLINSQ"))
+
 # remove well/reach combos not meeting percent depletion threshold
-df.prc <- subset(df, depletion.prc > prc.thres & depletion.prc.modflow > prc.thres)
+df.prc <- subset(df, abs(depletion.prc) > prc.thres | abs(depletion.prc.modflow) > prc.thres)
 
 ## calculate fit
-# fit is calculated for each reach across all wells
-df.fit.ByReach <- summarize(group_by(df.prc, reach, drainage.density, topography, recharge, method),
-                            n.well = sum(is.finite(depletion.prc)),
-                            MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
-                            MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
-                            MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
-                            MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
-                            KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
-
-# fit is calcualted for each well across all reaches
-df.fit.ByWell <- summarize(group_by(df.prc, well, drainage.density, topography, recharge, method),
-                           n.reach = sum(is.finite(depletion.prc)),
-                           MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
-                           MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
-                           MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
-                           MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
-                           KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
+# # fit is calculated for each reach across all wells
+# # for this to work, need to filter to only reaches responsive to > 1 well
+# df.fit.ByReach <- summarize(group_by(df.prc, reach, drainage.density, topography, recharge, method),
+#                             n.well = sum(is.finite(depletion.prc)),
+#                             MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
+#                             MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
+#                             MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
+#                             MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
+#                             KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
+# 
+# # fit is calcualted for each well across all reaches
+# # for this to work, need to filter to only wells with > 1 affected reach
+# df.fit.ByWell <- summarize(group_by(df.prc, well, drainage.density, topography, recharge, method),
+#                            n.reach = sum(is.finite(depletion.prc)),
+#                            MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
+#                            MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
+#                            MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
+#                            MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
+#                            KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
 
 # fit is calculated for each scenario based on all reach + well combos
 df.fit.ByScenario <- summarize(group_by(df.prc, drainage.density, topography, recharge, method),
@@ -80,6 +140,18 @@ df.fit.ByScenario <- summarize(group_by(df.prc, drainage.density, topography, re
                                MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
                                MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
                                KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
+
+# fit is calculated for each stream segment length based on all reach + well combos
+df.prc$length.km.class <- cut(df.prc$length.km, c(0,1,11), labels=c("<1 km", ">1 km"), include.lowest=T)
+df.fit.ByLength <- summarize(group_by(subset(df.prc, topography=="FLAT"), drainage.density, topography, recharge, method, length.km.class),
+                             n.reach = sum(is.finite(depletion.prc)),
+                             cor = cor(depletion.prc, depletion.prc.modflow, method="pearson"),
+                             R2 = R2(depletion.prc.modflow,depletion.prc),
+                             MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
+                             MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
+                             MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
+                             MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
+                             KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
 
 ## table
 df.fit.table <- dcast(df.fit.ByScenario[,c("drainage.density", "topography", "recharge", "method", "KGE.overall")],
@@ -110,16 +182,20 @@ p.depletion.diff.reach.well <-
 ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.diff.reach.well.png"),
        p.depletion.diff.reach.well, width=8, height=4, units="in")
 
-p.depletion.diff.hist <-
-  ggplot(subset(df, topography=="FLAT" & recharge=="NORCH"), aes(x=depletion.diff.prc, fill=method, color=method)) +
-  geom_histogram(alpha=0.2, binwidth=5, position="dodge") +
-  facet_wrap(~drainage.density, scales="free_y") +
-  scale_fill_discrete() +
-  theme_scz()
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.diff.hist.png"),
-       p.depletion.diff.hist, width=8, height=4, units="in")
+# scatterplot and density plot comparing all methods for each drainage density
+p.ByScenario.scatter <-
+  ggplot(subset(df.prc, topography=="FLAT" & recharge=="NORCH"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
+  geom_abline(slope=1, intercept=0) +
+  geom_point(shape=21) +
+  stat_smooth(method="lm") +
+  facet_wrap(~drainage.density) +
+  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_color_manual(values=pal.method, guide=F) +
+  theme_scz() +
+  theme(legend.position="bottom")
 
-p.depletion.diff.dens.noZeros <-
+p.ByScenario.dens <-
   ggplot(subset(df.prc, topography=="FLAT" & recharge=="NORCH"), aes(x=depletion.diff.prc, fill=method, color=method)) +
   geom_density(alpha=0.2) +
   geom_vline(xintercept=0) +
@@ -129,9 +205,29 @@ p.depletion.diff.dens.noZeros <-
   scale_color_manual(values=pal.method) +
   theme_scz() +
   theme(legend.position="bottom")
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.diff.dens.noZeros.png"),
-       p.depletion.diff.dens.noZeros, width=8, height=4, units="in")
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.scatter+dens.png"),
+       arrangeGrob(p.ByScenario.scatter, p.ByScenario.dens, ncol=1), width=10, height=8, units="in")
 
+# linear fits in scatterplot
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="THIESSEN" & drainage.density=="HD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="IDLIN" & drainage.density=="HD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="IDLINSQ" & drainage.density=="HD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="WEBLIN" & drainage.density=="HD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="WEBLINSQ" & drainage.density=="HD" & topography=="FLAT" & recharge=="NORCH")))
+
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="THIESSEN" & drainage.density=="MD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="IDLIN" & drainage.density=="MD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="IDLINSQ" & drainage.density=="MD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="WEBLIN" & drainage.density=="MD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="WEBLINSQ" & drainage.density=="MD" & topography=="FLAT" & recharge=="NORCH")))
+
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="THIESSEN" & drainage.density=="LD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="IDLIN" & drainage.density=="LD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="IDLINSQ" & drainage.density=="LD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="WEBLIN" & drainage.density=="LD" & topography=="FLAT" & recharge=="NORCH")))
+summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="WEBLINSQ" & drainage.density=="LD" & topography=="FLAT" & recharge=="NORCH")))
+
+# ternary plots
 p.fit.ByScenario.tern <-
   ggtern(subset(df.fit.ByScenario, recharge=="NORCH" & topography=="FLAT"), 
          aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method, shape=drainage.density)) +
@@ -141,7 +237,7 @@ p.fit.ByScenario.tern <-
   theme_rgbw() +
   theme(tern.axis.title=element_blank(),
         tern.panel.grid.major=element_blank())
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.fit.ByScenario.tern.png"),
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.tern.png"),
        p.fit.ByScenario.tern, width=6, height=4, units="in")
 
 p.fit.ByScenario.tern.facet <-
@@ -155,135 +251,135 @@ p.fit.ByScenario.tern.facet <-
   theme(tern.axis.title=element_blank(),
         tern.panel.grid.major=element_blank(),
         legend.position="bottom")
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.fit.ByScenario.tern.facet.png"),
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.tern.facet.png"),
        p.fit.ByScenario.tern.facet, width=10, height=4, units="in")
 
-# fit by well
-p.fit.ByWell.tern <-
-  ggtern(subset(df.fit.ByWell, drainage.density=="LD" & recharge=="NORCH" & method=="WEBLINSQ" & n.reach>2), 
-         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, shape=factor(n.reach))) +
-  geom_point() +
-  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
-  theme_rgbw() +
-  theme(tern.axis.title=element_blank())
-
-# fit by scenario
-p.ByScenario.scatter <-
-  ggplot(subset(df.prc, topography=="FLAT" & recharge=="NORCH"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
+#### Elevation sensitivity analysis ####
+p.elev.ByScenario.scatter <-
+  ggplot(subset(df.prc, drainage.density=="LD" & recharge=="NORCH"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
   geom_abline(slope=1, intercept=0) +
   geom_point(shape=21) +
   stat_smooth(method="lm") +
-  facet_wrap(~drainage.density) +
+  facet_wrap(~topography) +
   scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
   scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
   scale_color_manual(values=pal.method) +
-  theme_scz() +
-  theme(legend.position="bottom")
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.scatter.png"),
-       p.ByScenario.scatter, width=8, height=4, units="in")
+  theme_scz()
 
-p.ByScenario.sensitivity.scatter <-
-  ggplot(subset(df.prc, topography=="ELEV" & drainage.density=="LD"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
+p.elev.depletion.diff.dens.noZeros <-
+  ggplot(subset(df.prc, drainage.density=="LD" & recharge=="NORCH"), aes(x=depletion.diff.prc, fill=method, color=method)) +
+  geom_density(alpha=0.2) +
+  geom_vline(xintercept=0) +
+  facet_wrap(~topography, scales="free_y") +
+  scale_x_continuous(name="Analytical - MODFLOW [% of Total Depletion]") +
+  scale_fill_manual(values=pal.method) +
+  scale_color_manual(values=pal.method) +
+  theme_scz()
+
+p.elev.fit.ByScenario.tern.facet <-
+  ggtern(subset(df.fit.ByScenario, drainage.density=="LD" & recharge=="NORCH"), 
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method)) +
+  geom_point() +
+  facet_wrap(~topography) +
+  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
+  scale_color_manual(values=pal.method) +
+  theme_rgbw() +
+  theme(tern.axis.title=element_blank(),
+        tern.panel.grid.major=element_blank(),
+        legend.position="bottom")
+
+# save output
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.elev.fit.png"),
+       ggtern::arrangeGrob(p.elev.ByScenario.scatter,
+                           p.elev.depletion.diff.dens.noZeros, 
+                           p.elev.fit.ByScenario.tern.facet,
+                           ncol=1, heights=c(0.75, 0.75, 1)),
+       width=6, height=12)
+
+# plot elev diff vs flat diff
+df.elev.diff <- subset(df.prc, drainage.density=="LD" & recharge=="NORCH")[,c("well", "reach", "topography", "method", "depletion.diff.prc")]
+df.elev.diff <- dcast(df.elev.diff, well+reach+method ~ topography, value.var="depletion.diff.prc")
+p.elev.diff.ByScenario.scatter <-
+  ggplot(df.elev.diff, aes(x=FLAT, y=ELEV, color=method)) +
   geom_abline(slope=1, intercept=0) +
   geom_point(shape=21) +
   stat_smooth(method="lm") +
-  facet_wrap(~recharge) +
-  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]") +
-  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]") +
+  scale_x_continuous(name="Analyical-MODFLOW [%], FLAT") +
+  scale_y_continuous(name="Analyical-MODFLOW [%], ELEV") +
   scale_color_manual(values=pal.method) +
-  theme_scz() +
-  theme(legend.position="bottom")
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.sensitivity.scatter.png"),
-       p.ByScenario.sensitivity.scatter, width=8, height=6, units="in")
+  theme_scz()
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.elev.diff.scatter.png"),
+       p.elev.diff.ByScenario.scatter,
+       width=6, height=6)
 
-## comparing fit across different drainage densities (figure 4 in Tom D report)
-df.fit.density <- melt(subset(df.fit.ByReach, topography=="FLAT" & recharge=="NORCH"), id=c("reach", "drainage.density", "topography", "recharge", "method"),
-                       value.name = "fit.prc", variable.name="fit.metric")
-p.fit.density <- 
-  ggplot(df.fit.density, aes(x=method, y=log10(fit.prc), fill=drainage.density)) +
-  geom_hline(yintercept=c(0,1,2), color="gray65") +
-  geom_boxplot(outlier.shape=21) +
-  #  annotate("rect", xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=2, fill="red", alpha=0.5) +
-  facet_wrap(~fit.metric) +
-  scale_x_discrete("Method") +
-  scale_y_continuous("log(Fit) [%]") +
-  scale_fill_manual(name="Drainage Density", values=pal.density) +
-  theme_scz() +
-  theme(legend.position="bottom")
-ggsave(paste0(dir.plot, "DepletionByWell_02_FitByReach_p.fit.density.png"),
-       p.fit.density, width=8, height=6, units="in")
+# stats
+# linear relationship of (Analytical-MODFLOW) differences
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="THIESSEN")))
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="IDLIN")))
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="IDLINSQ")))
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="WEBLIN")))
+summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="WEBLINSQ")))
 
-## comparing fit across different elevations (figure 5 in Tom D report)
-df.fit.recharge <- melt(subset(df.fit.all, drainage.density=="LD" & recharge=="NORCH"), id=c("reach", "drainage.density", "topography", "recharge", "method"),
-                        value.name = "fit.prc", variable.name="fit.metric")
-p.fit.recharge <- 
-  ggplot(df.fit.recharge, aes(x=method, y=log10(fit.prc), fill=topography)) +
-  geom_hline(yintercept=c(0,1,2), color="gray65") +
-  geom_boxplot(outlier.shape=21) +
-  #  annotate("rect", xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=2, fill="red", alpha=0.5) +
-  facet_wrap(~fit.metric, labeller=as_labeller(fit.labels)) +
-  scale_x_discrete("Method") +
-  scale_y_continuous("log(Fit) [%]") +
-  scale_fill_manual(name="Topography", values=pal.recharge) +
-  theme_scz() +
-  theme(legend.position="bottom")
-ggsave(paste0(dir.plot, "DepletionByWell_02_FitByReach_p.fit.recharge.png"),
-       p.fit.recharge, width=8, height=6, units="in")
+# mean error for each approach
+t.test(subset(df.prc, topography=="FLAT" & method=="THIESSEN" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc, 
+       subset(df.prc, topography=="ELEV" & method=="THIESSEN" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc)
 
-## comparing fit across different recharge values (figure 6 in Tom D report)
-df.fit.recharge <- melt(subset(df.fit.ByReach, drainage.density=="LD" & topography=="ELEV"), id=c("reach", "drainage.density", "topography", "recharge", "method"),
-                        value.name = "fit.prc", variable.name="fit.metric")
-p.fit.recharge <- 
-  ggplot(df.fit.recharge, aes(x=method, y=log10(fit.prc), fill=recharge)) +
-  geom_hline(yintercept=c(0,1,2), color="gray65") +
-  geom_boxplot(outlier.shape=21) +
-  #  annotate("rect", xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=2, fill="red", alpha=0.5) +
-  facet_wrap(~fit.metric, labeller=as_labeller(fit.labels)) +
-  scale_x_discrete("Method") +
-  scale_y_continuous("log(Fit) [%]") +
-  scale_fill_manual(name="Recharge", values=pal.recharge, labels=labels.recharge) +
-  theme_scz() +
-  theme(legend.position="bottom")
-ggsave(paste0(dir.plot, "DepletionByWell_02_FitByReach_p.fit.recharge.png"),
-       p.fit.recharge, width=8, height=6, units="in")
+t.test(subset(df.prc, topography=="FLAT" & method=="IDLIN" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc, 
+       subset(df.prc, topography=="ELEV" & method=="IDLIN" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc)
+
+t.test(subset(df.prc, topography=="FLAT" & method=="IDLINSQ" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc, 
+       subset(df.prc, topography=="ELEV" & method=="IDLINSQ" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc)
+
+t.test(subset(df.prc, topography=="FLAT" & method=="WEBLIN" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc, 
+       subset(df.prc, topography=="ELEV" & method=="WEBLIN" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc)
+
+t.test(subset(df.prc, topography=="FLAT" & method=="WEBLINSQ" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc, 
+       subset(df.prc, topography=="ELEV" & method=="WEBLINSQ" & drainage.density=="LD" & recharge=="NORCH")$depletion.diff.prc)
+
+#### Recharge sensitivity analysis ####
+p.recharge.ByScenario.scatter <-
+  ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
+  geom_abline(slope=1, intercept=0) +
+  geom_point(shape=21) +
+  stat_smooth(method="lm") +
+  facet_wrap(~recharge, ncol=6) +
+  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
+  scale_color_manual(values=pal.method) +
+  theme_scz()
+
+p.recharge.depletion.diff.dens.noZeros <-
+  ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV"), aes(x=depletion.diff.prc, fill=method, color=method)) +
+  geom_density(alpha=0.2) +
+  geom_vline(xintercept=0) +
+  facet_wrap(~recharge, scales="free_y", ncol=6) +
+  scale_x_continuous(name="Analytical - MODFLOW [% of Total Depletion]") +
+  scale_fill_manual(values=pal.method) +
+  scale_color_manual(values=pal.method) +
+  theme_scz()
+
+p.recharge.fit.ByScenario.tern.facet <-
+  ggtern(subset(df.fit.ByScenario, drainage.density=="LD" & topography=="ELEV"), 
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method)) +
+  geom_point() +
+  facet_wrap(~recharge, ncol=6) +
+  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
+  scale_color_manual(values=pal.method) +
+  theme_rgbw() +
+  theme(tern.axis.title=element_blank(),
+        tern.panel.grid.major=element_blank(),
+        legend.position="bottom")
+
+# save output
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.recharge.fit.png"),
+       ggtern::arrangeGrob(p.recharge.ByScenario.scatter + theme(legend.position="bottom"),
+                           p.recharge.depletion.diff.dens.noZeros + theme(legend.position="bottom"), 
+                           p.recharge.fit.ByScenario.tern.facet + theme(legend.position="bottom"),
+                           ncol=1, heights=c(0.75, 0.6, 1)),
+       width=14, height=10)
+
 
 ##### make maps #####
-## load and prep data
-# load data
-shp.LD.boundary <- readOGR(paste0(dir.GSAS, "GIS"), layer="LD_boundary_aquifer")
-shp.LD.streams <- readOGR(paste0(dir.GSAS, "GIS"), layer="LD_streams")
-df.LD.wells <- read.csv(paste0(dir.GSAS, "GIS/LD_wells_info.csv"), stringsAsFactors=F)
-
-shp.MD.boundary <- readOGR(paste0(dir.GSAS, "GIS"), layer="MD_boundary_aquifer")
-shp.MD.streams <- readOGR(paste0(dir.GSAS, "GIS"), layer="MD_streams")
-shp.MD.wells <- readOGR(paste0(dir.GSAS, "GIS"), layer="MD_wells")
-#df.MD.wells <- read.csv(paste0(dir.GSAS, "GIS/MD_wells_info.csv"), stringsAsFactors=F)
-
-shp.HD.boundary <- readOGR(paste0(dir.GSAS, "GIS"), layer="HD_boundary_aquifer")
-shp.HD.streams <- readOGR(paste0(dir.GSAS, "GIS"), layer="HD_streams")
-df.HD.wells <- read.csv(paste0(dir.GSAS, "GIS/HD_wells_info.csv"), stringsAsFactors=F)
-
-# tidy spatial data for ggplot
-df.LD.boundary <- tidy(shp.LD.boundary)
-df.LD.streams <- tidy(shp.LD.streams)
-
-df.MD.boundary <- tidy(shp.MD.boundary)
-df.MD.streams <- tidy(shp.MD.streams)
-df.MD.wells <- as.data.frame(shp.MD.wells)
-
-df.HD.boundary <- tidy(shp.HD.boundary)
-df.HD.streams <- tidy(shp.HD.streams)
-
-# set up reach and well columns to match df.all
-df.LD.wells$well <- as.numeric(substring(df.LD.wells$Well_Name, 8))
-df.LD.streams$reach <- as.numeric(df.LD.streams$id)+2
-
-df.MD.wells$well <- as.numeric(substring(df.MD.wells$Well_Name, 8))
-df.MD.streams$reach <- as.numeric(df.MD.streams$id)+2
-
-df.HD.wells$well <- as.numeric(substring(df.HD.wells$Well_Name, 8))
-df.HD.streams$reach <- as.numeric(df.HD.streams$id)+2
-
 ### make maps of reach depletion for a given well
 # low density
 # choose a well
@@ -292,13 +388,18 @@ LD.well.n <- 20
 # subset depletion data for that well
 df.LD.depletion.well <- subset(df.all, topography=="FLAT" & recharge=="NORCH" & drainage.density=="LD" & well==LD.well.n)
 df.LD.streams.all <- inner_join(df.LD.streams, df.LD.depletion.well, by="reach")
+df.LD.streams.all$depletion.prc.class <- cut(df.LD.streams.all$depletion.prc,
+                                             breaks=c(c(0,5,10,15,20,100)),
+                                             labels=c("<5%", "5-10%", "10-15%", "15-20%", ">20%"),
+                                             include.lowest=T)
+df.LD.streams.all$method <- factor(df.LD.streams.all$method, levels=c("MODFLOW", "THIESSEN", "IDLIN", "IDLINSQ", "WEBLIN", "WEBLINSQ"))
 
 # make ggplot: streamlines color-coded by depletion for one well
 p.LD.byWell <-
   ggplot(data=df.LD.streams.all, aes(x=long, y=lat)) +
   facet_wrap(~method, ncol=6) +
   geom_polygon(data=df.LD.boundary, aes(x=long, y=lat), color="gray65", fill=NA) +
-#  geom_point(data=df.LD.wells, aes(x=X.world_coord.m., y=Y.world_coord.m.), color="black", shape=21) +
+  #  geom_point(data=df.LD.wells, aes(x=X.world_coord.m., y=Y.world_coord.m.), color="black", shape=21) +
   geom_point(data=subset(df.LD.wells, well==LD.well.n), aes(x=X.world_coord.m., y=Y.world_coord.m.), color="red", size=2) +
   geom_path(aes(group=group, color=depletion.prc.class), size=1) +
   scale_color_manual(name="Depletion [%]", values=pal.depletion, drop=F, guide=F) +
@@ -313,13 +414,18 @@ MD.well.n <- 23
 # subset depletion data for that well
 df.MD.depletion.well <- subset(df.all, topography=="FLAT" & recharge=="NORCH" & drainage.density=="MD" & well==MD.well.n)
 df.MD.streams.all <- inner_join(df.MD.streams, df.MD.depletion.well, by="reach")
+df.MD.streams.all$depletion.prc.class <- cut(df.MD.streams.all$depletion.prc,
+                                             breaks=c(c(0,5,10,15,20,100)),
+                                             labels=c("<5%", "5-10%", "10-15%", "15-20%", ">20%"),
+                                             include.lowest=T)
+df.MD.streams.all$method <- factor(df.MD.streams.all$method, levels=c("MODFLOW", "THIESSEN", "IDLIN", "IDLINSQ", "WEBLIN", "WEBLINSQ"))
 
 # make ggplot: streamlines color-coded by depletion for one well
 p.MD.byWell <-
   ggplot(data=df.MD.streams.all, aes(x=long, y=lat)) +
   facet_wrap(~method, ncol=6) +
   geom_polygon(data=df.MD.boundary, aes(x=long, y=lat), color="gray65", fill=NA) +
-#  geom_point(data=df.MD.wells, aes(x=X_world_co, y=Y_world_co), color="black", shape=21) +
+  #  geom_point(data=df.MD.wells, aes(x=X_world_co, y=Y_world_co), color="black", shape=21) +
   geom_point(data=subset(df.MD.wells, well==MD.well.n), aes(x=X_world_co, y=Y_world_co), color="red", size=2) +
   geom_path(aes(group=group, color=depletion.prc.class), size=1) +
   scale_color_manual(name="Depletion [%]", values=pal.depletion, drop=F, guide=F) +
@@ -334,13 +440,18 @@ HD.well.n <- 23
 # subset depletion data for that well
 df.HD.depletion.well <- subset(df.all, topography=="FLAT" & recharge=="NORCH" & drainage.density=="HD" & well==HD.well.n)
 df.HD.streams.all <- inner_join(df.HD.streams, df.HD.depletion.well, by="reach")
+df.HD.streams.all$depletion.prc.class <- cut(df.HD.streams.all$depletion.prc,
+                                             breaks=c(c(0,5,10,15,20,100)),
+                                             labels=c("<5%", "5-10%", "10-15%", "15-20%", ">20%"),
+                                             include.lowest=T)
+df.HD.streams.all$method <- factor(df.HD.streams.all$method, levels=c("MODFLOW", "THIESSEN", "IDLIN", "IDLINSQ", "WEBLIN", "WEBLINSQ"))
 
 # make ggplot: streamlines color-coded by depletion for one well
 p.HD.byWell <-
   ggplot(data=df.HD.streams.all, aes(x=long, y=lat)) +
   facet_wrap(~method, ncol=6) +
   geom_polygon(data=df.HD.boundary, aes(x=long, y=lat), color="gray65", fill=NA) +
-#  geom_point(data=df.HD.wells, aes(x=X.world_coord.m., y=Y.world_coord.m.), color="black", shape=21) +
+  #  geom_point(data=df.HD.wells, aes(x=X.world_coord.m., y=Y.world_coord.m.), color="black", shape=21) +
   geom_point(data=subset(df.HD.wells, well==HD.well.n), aes(x=X.world_coord.m., y=Y.world_coord.m.), color="red", size=2) +
   geom_path(aes(group=group, color=depletion.prc.class), size=1) +
   scale_color_manual(name="Depletion [%]", values=pal.depletion, drop=F) +
@@ -349,7 +460,7 @@ p.HD.byWell <-
   theme(legend.position="bottom")
 
 # save output
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.byWell.png"),
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.map.depletion.byWell.png"),
        arrangeGrob(p.LD.byWell + theme(axis.text = element_blank(), axis.title=element_blank(), panel.border=element_blank(), 
                                        axis.ticks=element_blank(), strip.background=element_blank()),
                    p.MD.byWell + theme(axis.text = element_blank(), axis.title=element_blank(), panel.border=element_blank(), 
@@ -412,14 +523,14 @@ df.LD.depletion.all$depletion.prc.class <- cut(df.LD.depletion.all$depletion.prc
                                                include.lowest=T)
 
 # set factor level
-df.LD.depletion.all$method <- factor(df.LD.depletion.all$method, levels=levels(df.all$method))
+df.LD.depletion.all$method <- factor(df.LD.depletion.all$method, levels=levels(df.prc$method))
 
 # make ggplot: streamlines color-coded by depletion for one well
 p.LD.byReach <-
   ggplot(data=df.LD.depletion.all, aes(x=long, y=lat)) +
   geom_raster(aes(fill=depletion.prc.class)) +
   facet_wrap(~method, ncol=6) +
-#  geom_polygon(data=df.LD.boundary, aes(x=long, y=lat), color="gray65", fill=NA) +
+  #  geom_polygon(data=df.LD.boundary, aes(x=long, y=lat), color="gray65", fill=NA) +
   geom_point(data=df.LD.wells, aes(x=X.world_coord.m., y=Y.world_coord.m.), color="black", shape=21, alpha=0.5) +
   geom_path(data=subset(df.LD.streams, reach==LD.reach.n), aes(x=long, y=lat, group=group), color="red", size=1) +
   scale_fill_manual(name="Depletion [%]", values=pal.depletion.0to100, drop=F) +
@@ -478,7 +589,7 @@ df.MD.depletion.all$depletion.prc.class <- cut(df.MD.depletion.all$depletion.prc
                                                include.lowest=T)
 
 # set factor level
-df.MD.depletion.all$method <- factor(df.MD.depletion.all$method, levels=levels(df.all$method))
+df.MD.depletion.all$method <- factor(df.MD.depletion.all$method, levels=levels(df.prc$method))
 
 # make ggplot: streamlines color-coded by depletion for one well
 p.MD.byReach <-
@@ -544,7 +655,7 @@ df.HD.depletion.all$depletion.prc.class <- cut(df.HD.depletion.all$depletion.prc
                                                include.lowest=T)
 
 # set factor level
-df.HD.depletion.all$method <- factor(df.HD.depletion.all$method, levels=levels(df.all$method))
+df.HD.depletion.all$method <- factor(df.HD.depletion.all$method, levels=levels(df.prc$method))
 
 # make ggplot: streamlines color-coded by depletion for one well
 p.HD.byReach <-
@@ -559,121 +670,12 @@ p.HD.byReach <-
   theme_scz()
 
 # save output
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.depletion.byReach.png"),
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.map.depletion.byReach.png"),
        arrangeGrob(p.LD.byReach + theme(axis.text = element_blank(), axis.title=element_blank(), panel.border=element_blank(), 
-                                       axis.ticks=element_blank(), strip.background=element_blank()),
+                                        axis.ticks=element_blank(), strip.background=element_blank()),
                    p.MD.byReach + theme(axis.text = element_blank(), axis.title=element_blank(), panel.border=element_blank(), 
-                                       axis.ticks=element_blank(), strip.background=element_blank()), 
+                                        axis.ticks=element_blank(), strip.background=element_blank()), 
                    p.HD.byReach + theme(axis.text = element_blank(), axis.title=element_blank(), panel.border=element_blank(), 
-                                       axis.ticks=element_blank(), strip.background=element_blank()),
+                                        axis.ticks=element_blank(), strip.background=element_blank()),
                    ncol=1, heights=c(1, 0.7, 0.7)),
        width=12, height=8)
-
-#### Elevation sensitivity analysis ####
-
-p.elev.ByScenario.scatter <-
-  ggplot(subset(df.prc, drainage.density=="LD" & recharge=="NORCH"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
-  geom_abline(slope=1, intercept=0) +
-  geom_point(shape=21) +
-  stat_smooth(method="lm") +
-  facet_wrap(~topography) +
-  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
-  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
-  scale_color_manual(values=pal.method) +
-  theme_scz()
-
-p.elev.depletion.diff.dens.noZeros <-
-  ggplot(subset(df.prc, drainage.density=="LD" & recharge=="NORCH"), aes(x=depletion.diff.prc, fill=method, color=method)) +
-  geom_density(alpha=0.2) +
-  geom_vline(xintercept=0) +
-  facet_wrap(~topography, scales="free_y") +
-  scale_x_continuous(name="Analytical - MODFLOW [% of Total Depletion]") +
-  scale_fill_manual(values=pal.method) +
-  scale_color_manual(values=pal.method) +
-  theme_scz()
-
-p.elev.fit.ByScenario.tern.facet <-
-  ggtern(subset(df.fit.ByScenario, drainage.density=="LD" & recharge=="NORCH"), 
-         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method)) +
-  geom_point() +
-  facet_wrap(~topography) +
-  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
-  scale_color_manual(values=pal.method) +
-  theme_rgbw() +
-  theme(tern.axis.title=element_blank(),
-        tern.panel.grid.major=element_blank(),
-        legend.position="bottom")
-
-# save output
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.elev.fit.png"),
-       ggtern::arrangeGrob(p.elev.ByScenario.scatter,
-                           p.elev.depletion.diff.dens.noZeros, 
-                           p.elev.fit.ByScenario.tern.facet,
-                           ncol=1, heights=c(0.75, 0.75, 1)),
-       width=6, height=12)
-
-# plot elev diff vs flat diff
-df.elev.diff <- subset(df.prc, drainage.density=="LD" & recharge=="NORCH")[,c("well", "reach", "topography", "method", "depletion.diff.prc")]
-df.elev.diff <- dcast(df.elev.diff, well+reach+method ~ topography, value.var="depletion.diff.prc")
-p.elev.diff.ByScenario.scatter <-
-  ggplot(df.elev.diff, aes(x=FLAT, y=ELEV, color=method)) +
-  geom_abline(slope=1, intercept=0) +
-  geom_point(shape=21) +
-  stat_smooth(method="lm") +
-  scale_x_continuous(name="Analyical-MODFLOW [%], FLAT") +
-  scale_y_continuous(name="Analyical-MODFLOW [%], ELEV") +
-  scale_color_manual(values=pal.method) +
-  theme_scz()
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.elev.diff.ByScenario.scatter.png"),
-       p.elev.diff.ByScenario.scatter,
-       width=6, height=6)
-
-# stats
-summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="THIESSEN")))
-summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="IDLIN")))
-summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="IDLINSQ")))
-summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="WEBLIN")))
-summary(lm(FLAT ~ ELEV, data=subset(df.elev.diff, method=="WEBLINSQ")))
-
-#### Recharge sensitivity analysis ####
-
-p.recharge.ByScenario.scatter <-
-  ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
-  geom_abline(slope=1, intercept=0) +
-  geom_point(shape=21) +
-  stat_smooth(method="lm") +
-  facet_wrap(~recharge, ncol=6) +
-  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
-  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", breaks=seq(0,100,25)) +
-  scale_color_manual(values=pal.method) +
-  theme_scz()
-
-p.recharge.depletion.diff.dens.noZeros <-
-  ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV"), aes(x=depletion.diff.prc, fill=method, color=method)) +
-  geom_density(alpha=0.2) +
-  geom_vline(xintercept=0) +
-  facet_wrap(~recharge, scales="free_y", ncol=6) +
-  scale_x_continuous(name="Analytical - MODFLOW [% of Total Depletion]") +
-  scale_fill_manual(values=pal.method) +
-  scale_color_manual(values=pal.method) +
-  theme_scz()
-
-p.recharge.fit.ByScenario.tern.facet <-
-  ggtern(subset(df.fit.ByScenario, drainage.density=="LD" & topography=="ELEV"), 
-         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method)) +
-  geom_point() +
-  facet_wrap(~recharge, ncol=6) +
-  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
-  scale_color_manual(values=pal.method) +
-  theme_rgbw() +
-  theme(tern.axis.title=element_blank(),
-        tern.panel.grid.major=element_blank(),
-        legend.position="bottom")
-
-# save output
-ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.recharge.fit.png"),
-       ggtern::arrangeGrob(p.recharge.ByScenario.scatter + theme(legend.position="bottom"),
-                           p.recharge.depletion.diff.dens.noZeros + theme(legend.position="bottom"), 
-                           p.recharge.fit.ByScenario.tern.facet + theme(legend.position="bottom"),
-                           ncol=1, heights=c(0.75, 0.6, 1)),
-       width=14, height=10)
