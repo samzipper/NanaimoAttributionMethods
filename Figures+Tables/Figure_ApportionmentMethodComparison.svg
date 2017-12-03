@@ -704,7 +704,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="2.29"
-     inkscape:cx="311.68567"
+     inkscape:cx="392.03093"
      inkscape:cy="93.324248"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -770,15 +770,15 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="2.4337018"
+       x="1.1236579"
        y="145.57657"
        id="text4542"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544"
-         x="2.4337018"
+         x="1.1236579"
          y="145.57657"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(a) Thiessen Polygon</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(a) Thiessen Polygon (TPOLY)</tspan></text>
     <circle
        style="opacity:1;fill:#d01d1d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4910"
@@ -885,15 +885,15 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="190.82326"
+       x="189.94991"
        y="145.57657"
        id="text4542-5"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544-8"
-         x="190.82326"
+         x="189.94991"
          y="145.57657"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(b) Inverse Distance</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(b) Inverse Distance (ID, IDS)</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#2d8989;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 221.38957,205.12823 c 13.05028,-32.18602 53.95606,-7.95605 73,-27 3.3947,-3.39469 6.16202,-17.08101 10,-19 19.24117,-9.62058 19.35396,2.58416 26,-24"
@@ -993,15 +993,20 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="378.43613"
+       x="377.56277"
        y="145.57657"
        id="text4542-5-5"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544-8-2"
-         x="378.43613"
+         x="377.56277"
          y="145.57657"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(c) Web Inverse Distance</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(c) Web Inverse Distance</tspan><tspan
+         sodipodi:role="line"
+         x="377.56277"
+         y="158.07657"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial"
+         id="tspan4503">     (WID, WIDS)</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#2d8989;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 409.00246,204.83781 c 13.05028,-32.18602 53.95606,-7.95605 73,-27 3.3947,-3.39469 6.16202,-17.08101 10,-19 19.24117,-9.62058 19.35396,2.58416 26,-24"
@@ -1728,7 +1733,7 @@
          sodipodi:role="line">...</tspan></text>
     <g
        id="g5690"
-       transform="translate(3.7202368,0)">
+       transform="translate(2.8468744,0)">
       <text
          sodipodi:linespacing="125%"
          id="text4542-8"
