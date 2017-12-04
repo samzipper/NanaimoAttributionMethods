@@ -16,6 +16,7 @@ require(gridExtra)
 require(tidyr)
 require(broom)
 require(gstat)
+require(extrafont)
 
 ## colors
 # from http://paletton.com/#uid=7000u0ktSlllysDruqa-qh2KKbE
@@ -56,6 +57,7 @@ pal.method <- c("THIESSEN"=col.TP, "IDLIN"=col.ID, "IDLINSQ"=col.ID2, "WEBLIN"=c
 
 ## labels
 labels.recharge <- c("NORCH"="0", "RCH10"="10", "RCH50"="50", "RCH100"="100", "RCH500"="500", "RCH1000"="1000")
+labels.method <- c("THIESSEN"="TPOLY", "IDLIN"="ID", "IDLINSQ"="IDS", "WEBLIN"="WID", "WEBLINSQ"="WIDS")
 
 ## paths
 # path to directory on GSAS with data
@@ -106,7 +108,11 @@ R2 <- function(sim, obs) {
 }
 
 ## ggplot theme
+windowsFonts(Arial=windowsFont("TT Arial"))
 theme_scz <- function(...){
   theme_bw() + 
-    theme(panel.grid=element_blank())
+    theme(
+      text=element_text(size=8, color="black"),
+      axis.title=element_text(face="bold", size=rel(1)),
+      panel.grid=element_blank())
 }

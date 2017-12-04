@@ -57,37 +57,40 @@ df.fit.table[,4:8] <- round(df.fit.table[,4:8], 3)
 # scatterplot and density plot comparing all methods for each drainage density
 p.ByScenario.scatter <-
   ggplot(subset(df.prc, topography=="FLAT" & recharge=="NORCH"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
-  geom_abline(slope=1, intercept=0) +
+  geom_abline(slope=1, intercept=0, color="gray65") +
   geom_point(shape=21, alpha=0.5) +
   stat_smooth(method="lm", se=F) +
   facet_wrap(~drainage.density, ncol=3, scales="free") +
-  scale_x_continuous(name="Analytical Depletion [% of Total Depletion]", 
+  scale_x_continuous(name="Analytical Depletion [%]", 
                      breaks=seq(0,100,25), limits=c(0,100), expand=c(0,0)) +
-  scale_y_continuous(name="MODFLOW Depletion [% of Total Depletion]", 
+  scale_y_continuous(name="MODFLOW Depletion [%]", 
                      breaks=seq(0,100,25), limits=c(0,100), expand=c(0,0)) +
-  scale_color_manual(values=pal.method, guide=F) +
+  scale_color_manual(name="Method", values=pal.method, labels=labels.method, guide=F) +
   theme_scz() +
   theme(legend.position="bottom",
-        panel.border=element_rect(color="black"))
+        legend.background=element_blank(),
+        strip.background=element_blank(),
+        strip.text=element_blank())
 
 p.ByScenario.dens <-
-  ggplot(subset(df.prc, topography=="FLAT" & recharge=="NORCH"), aes(x=depletion.diff.prc, fill=method, color=method)) +
-  geom_vline(xintercept=0) +
-  geom_density(alpha=0.2) +
+  ggplot(subset(df.prc, topography=="FLAT" & recharge=="NORCH")) +
+  geom_vline(xintercept=0, color="gray65") +
+  geom_density(aes(x=depletion.diff.prc, fill=method, color=method), alpha=0.2) +
   facet_wrap(~drainage.density, scales="free_y", ncol=3) +
-  scale_x_continuous(name="Analytical - MODFLOW [% of Total Depletion]") +
-  scale_y_continuous(limits=c(0,0.055), breaks=seq(0,0.05,0.01), expand=c(0,0)) +
+  scale_x_continuous(name="Analytical - MODFLOW Depletion [%]") +
+  scale_y_continuous(name="Density", limits=c(0,0.055), breaks=seq(0,0.05,0.01), expand=c(0,0)) +
   scale_fill_manual(values=pal.method, guide=F) +
   scale_color_manual(values=pal.method, guide=F) +
   theme_scz() +
   theme(legend.position="bottom",
-        panel.border=element_rect(color="black"))
+        strip.background=element_blank(),
+        strip.text=element_blank())
 
-pdf(paste0(dir.fig, "Figure_Baseline_Scatter+Dens.pdf"), width=(183/25.4), height=(100/25.4))
-grid.arrange(p.ByScenario.scatter + theme(text=element_blank(), plot.margin=unit(c(0.5,0.5,0,8), "mm")), 
-             p.ByScenario.dens + theme(text=element_blank(), plot.margin=unit(c(7,0.5,0,8), "mm")), 
-             ncol=1)
-dev.off()
+ggsave(paste0(dir.fig, "Figure_Baseline_Scatter+Dens_NoLabels.pdf"), 
+       arrangeGrob(p.ByScenario.scatter + theme(plot.margin=unit(c(1.5,3,0,0), "mm")), 
+                   p.ByScenario.dens + theme(plot.margin=unit(c(3,3,0,0), "mm")), 
+                   ncol=1, heights=c(1.1, 1)), 
+       width=185, height=95, units="mm", device=cairo_pdf)
 
 # linear fits in scatterplot
 summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="THIESSEN" & drainage.density=="HD" & topography=="FLAT" & recharge=="NORCH")))
