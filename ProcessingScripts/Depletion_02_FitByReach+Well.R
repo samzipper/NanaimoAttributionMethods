@@ -24,7 +24,9 @@ prc.thres <- 5  # Reeves et al. (2009) used 5%
 df.all <- read.csv(paste0(dir.git, "data/Depletion_01_AggregateAllResults.csv"))
 
 # make a wide-format version
-df.wide <- dcast(subset(df.all, topography=="FLAT" & drainage.density=="LD"), drainage.density+well+reach+topography+recharge~method, value.var="depletion.prc")
+df.wide.LD <- dcast(subset(df.all, topography=="FLAT" & drainage.density=="LD"), drainage.density+well+reach+topography+recharge~method, value.var="depletion.prc")
+df.wide.MD <- dcast(subset(df.all, topography=="FLAT" & drainage.density=="MD"), drainage.density+well+reach+topography+recharge~method, value.var="depletion.prc")
+df.wide.HD <- dcast(subset(df.all, topography=="FLAT" & drainage.density=="HD"), drainage.density+well+reach+topography+recharge~method, value.var="depletion.prc")
 
 # check depletion to make sure things sum to 100
 df.depletion.byWell <- dplyr::summarize(group_by(df.all, well, drainage.density, topography, recharge, method),
@@ -74,6 +76,9 @@ df.LD.stream.length <- data.frame(reach = seq(2,63),
 df.LD.stream.length$length.km.tercile <- cut(df.LD.stream.length$length.km, 
                                              quantile(df.LD.stream.length$length.km, c(0, 0.33, 0.66, 1)),
                                              labels=c("shortest", "middle", "longest"), include.lowest=T)
+df.LD.stream.length$length.km.quartile <- cut(df.LD.stream.length$length.km, 
+                                             quantile(df.LD.stream.length$length.km, c(0, 0.25, 0.5, 0.75, 1)),
+                                             labels=c("Q1", "Q2", "Q3", "Q4"), include.lowest=T)
 
 df.MD.stream.length <- data.frame(reach = seq(2,63),
                                   length.km = shp.MD.streams@data$STE_LE,
@@ -81,6 +86,9 @@ df.MD.stream.length <- data.frame(reach = seq(2,63),
 df.MD.stream.length$length.km.tercile <- cut(df.MD.stream.length$length.km, 
                                              quantile(df.MD.stream.length$length.km, c(0, 0.33, 0.66, 1)),
                                              labels=c("shortest", "middle", "longest"), include.lowest=T)
+df.MD.stream.length$length.km.quartile <- cut(df.MD.stream.length$length.km, 
+                                              quantile(df.MD.stream.length$length.km, c(0, 0.25, 0.5, 0.75, 1)),
+                                              labels=c("Q1", "Q2", "Q3", "Q4"), include.lowest=T)
 
 df.HD.stream.length <- data.frame(reach = seq(2,63),
                                   length.km = shp.HD.streams@data$Length,
@@ -88,6 +96,9 @@ df.HD.stream.length <- data.frame(reach = seq(2,63),
 df.HD.stream.length$length.km.tercile <- cut(df.HD.stream.length$length.km, 
                                              quantile(df.HD.stream.length$length.km, c(0, 0.33, 0.66, 1)),
                                              labels=c("shortest", "middle", "longest"), include.lowest=T)
+df.HD.stream.length$length.km.quartile <- cut(df.HD.stream.length$length.km, 
+                                              quantile(df.HD.stream.length$length.km, c(0, 0.25, 0.5, 0.75, 1)),
+                                              labels=c("Q1", "Q2", "Q3", "Q4"), include.lowest=T)
 
 # extract MODFLOW data and make it a column of its own in 'df' data frame
 df.mod <- subset(df.all, method=="MODFLOW")
@@ -140,18 +151,6 @@ df.fit.ByScenario <- summarize(group_by(df.prc, drainage.density, topography, re
                                MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
                                MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
                                KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
-
-# fit is calculated for each stream segment length based on all reach + well combos
-df.prc$length.km.class <- cut(df.prc$length.km, c(0,1,11), labels=c("<1 km", ">1 km"), include.lowest=T)
-df.fit.ByLength <- summarize(group_by(subset(df.prc, topography=="FLAT"), drainage.density, topography, recharge, method, length.km.class),
-                             n.reach = sum(is.finite(depletion.prc)),
-                             cor = cor(depletion.prc, depletion.prc.modflow, method="pearson"),
-                             R2 = R2(depletion.prc.modflow,depletion.prc),
-                             MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
-                             MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
-                             MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
-                             MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
-                             KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
 
 ## table
 df.fit.table <- dcast(df.fit.ByScenario[,c("drainage.density", "topography", "recharge", "method", "KGE.overall")],
@@ -253,6 +252,66 @@ p.fit.ByScenario.tern.facet <-
         legend.position="bottom")
 ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.ByScenario.tern.facet.png"),
        p.fit.ByScenario.tern.facet, width=10, height=4, units="in")
+
+## reach length comparison
+p.length.dens <- 
+  ggplot(subset(df.prc, topography=="FLAT"), aes(x=length.km)) +
+  geom_histogram() +
+  facet_wrap(~drainage.density)
+
+# fit is calculated for each stream segment length based on all reach + well combos
+df.length.quartiles <- rbind(df.LD.stream.length, df.MD.stream.length, df.HD.stream.length)
+df.length.quartiles$drainage.density <- factor(df.length.quartiles$drainage.density, levels=c("HD", "MD", "LD"))
+df.prc$length.km.class <- cut(df.prc$length.km, c(0,1,11), labels=c("<1 km", ">1 km"), include.lowest=T)
+df.fit.ByLength <- summarize(group_by(subset(df.prc, topography=="FLAT"), drainage.density, topography, recharge, method, length.km.quartile),
+                             n.reach = sum(is.finite(depletion.prc)),
+                             cor = cor(depletion.prc, depletion.prc.modflow, method="pearson"),
+                             R2 = R2(depletion.prc.modflow,depletion.prc),
+                             MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
+                             MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
+                             MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
+                             MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
+                             KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
+# set up for ecdf
+df.length.HD <- subset(df.length.quartiles, drainage.density=="HD")
+df.length.HD$ecdf <- ecdf(df.length.HD$length.km)(df.length.HD$length.km)
+
+df.length.MD <- subset(df.length.quartiles, drainage.density=="MD")
+df.length.MD$ecdf <- ecdf(df.length.MD$length.km)(df.length.MD$length.km)
+
+df.length.LD <- subset(df.length.quartiles, drainage.density=="LD")
+df.length.LD$ecdf <- ecdf(df.length.LD$length.km)(df.length.LD$length.km)
+
+df.length.ecdf <- rbind(df.length.HD, df.length.MD, df.length.LD)
+df.length.ecdf$drainage.density <- factor(df.length.ecdf$drainage.density, levels=c("HD", "MD", "LD"))
+
+p.length.fit.box <-
+  ggplot(subset(df.fit.ByLength, !(method %in% c("IDLIN", "WEBLIN"))), aes(x=method, fill=length.km.quartile, y=KGE.overall)) +
+  geom_bar(stat="identity", position="dodge") +
+  geom_hline(yintercept=0, color="gray65") +
+  facet_wrap(~drainage.density, scales="free") +
+  scale_fill_manual(name="Length Quartile", labels=labels.quartile, values=pal.quartile) +
+  scale_y_continuous(name="KGE", limits=c(min(subset(df.fit.ByLength, !(method %in% c("IDLIN", "WEBLIN")))$KGE.overall), 
+                                          max(subset(df.fit.ByLength, !(method %in% c("IDLIN", "WEBLIN")))$KGE.overall))) +
+  scale_x_discrete(name="Method", labels=labels.method) +
+  theme_scz() +
+  theme(legend.position="bottom")
+
+p.length.ecdf <-
+  ggplot() +
+  #geom_hline(yintercept=0, color="gray65") +
+  geom_ribbon(data=df.length.ecdf, aes(x=length.km, ymin=0, ymax=ecdf, color=length.km.quartile, fill=length.km.quartile)) +
+  geom_line(data=df.length.ecdf, aes(x=length.km, y=ecdf)) +
+  facet_wrap(~drainage.density, scales="free") +
+  scale_x_log10(name="Reach Length [km]", limits=c(min(df.length.ecdf$length.km), max(df.length.ecdf$length.km))) +
+  scale_y_continuous(name="ECDF", expand=c(0,0), limits=c(0,1), breaks=seq(0,1,0.25)) +
+  scale_fill_manual(name="Length Quartile", labels=labels.quartile, values=pal.quartile) +
+  scale_color_manual(name="Length Quartile", labels=labels.quartile, values=pal.quartile) +
+  theme_scz() +
+  theme(legend.position="bottom")
+
+ggsave(paste0(dir.plot, "Depletion_02_FitByReach+p.length.fit.png"),
+       arrangeGrob(p.length.fit.box, p.length.hist, ncol=1), width=8, height=8, units="in")
 
 #### Elevation sensitivity analysis ####
 p.elev.ByScenario.scatter <-

@@ -53,11 +53,21 @@ col.WID <- "#e7298a"
 col.WID2 <- "#66a61e"
 pal.method <- c("THIESSEN"=col.TP, "IDLIN"=col.ID, "IDLINSQ"=col.ID2, "WEBLIN"=col.WID, "WEBLINSQ"=col.WID2)
 
-# named vectors defining color strings
+# stream length quartile
+col.Q1 <- pal.depletion.0to100[11]
+col.Q2 <- pal.depletion.0to100[8]
+col.Q3 <- pal.depletion.0to100[4]
+col.Q4 <- pal.depletion.0to100[1]
+pal.quartile <- c("Q1"=col.Q1, "Q2"=col.Q2, "Q3"=col.Q3, "Q4"=col.Q4)
+pal.length.class <- c("<0.1"=pal.depletion.0to100[11], "0.1-0.5"=pal.depletion.0to100[9], 
+                      "0.5-1"=pal.depletion.0to100[7], "1-5"=pal.depletion.0to100[3], 
+                      ">5"=pal.depletion.0to100[1])
 
 ## labels
 labels.recharge <- c("NORCH"="0", "RCH10"="10", "RCH50"="50", "RCH100"="100", "RCH500"="500", "RCH1000"="1000")
 labels.method <- c("THIESSEN"="TPOLY", "IDLIN"="ID", "IDLINSQ"="IDS", "WEBLIN"="WID", "WEBLINSQ"="WIDS")
+labels.quartile <- c("Q1"="0-25%", "Q2"="25-50%", "Q3"="50-75%", "Q4"="75-100%")
+labels.density <- c("HD"="HD", "MD"="MD", "LD"="LD")
 
 ## paths
 # path to directory on GSAS with data
@@ -114,5 +124,13 @@ theme_scz <- function(...){
     theme(
       text=element_text(size=8, color="black"),
       axis.title=element_text(face="bold", size=rel(1)),
+      legend.title=element_text(face="bold", size=rel(1)),
       panel.grid=element_blank())
 }
+
+# extract legend - https://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots
+g_legend<-function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
