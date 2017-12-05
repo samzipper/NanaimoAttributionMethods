@@ -12,7 +12,9 @@ require(raster)
 require(rgdal)
 require(rgeos)
 require(maptools)
+require(grid)
 require(gridExtra)
+require(gtable)
 require(tidyr)
 require(broom)
 require(gstat)
@@ -64,7 +66,7 @@ pal.length.class <- c("<0.1"=pal.depletion.0to100[11], "0.1-0.5"=pal.depletion.0
                       ">5"=pal.depletion.0to100[1])
 
 ## labels
-labels.recharge <- c("NORCH"="0", "RCH10"="10", "RCH50"="50", "RCH100"="100", "RCH500"="500", "RCH1000"="1000")
+labels.recharge <- c("NORCH"="0 mm", "RCH10"="10 mm", "RCH50"="50 mm", "RCH100"="100 mm", "RCH500"="500 mm", "RCH1000"="1000 mm")
 labels.method <- c("THIESSEN"="TPOLY", "IDLIN"="ID", "IDLINSQ"="IDS", "WEBLIN"="WID", "WEBLINSQ"="WIDS")
 labels.quartile <- c("Q1"="0-25%", "Q2"="25-50%", "Q3"="50-75%", "Q4"="75-100%")
 labels.density <- c("HD"="HD", "MD"="MD", "LD"="LD")
