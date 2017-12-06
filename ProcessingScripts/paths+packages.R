@@ -38,12 +38,12 @@ pal.recharge <- c("NORCH"=col.LD, "RCH10"=col.RCH10, "RCH50"=col.RCH50, "RCH100"
 
 # depletion
 #col.ramp.depletion <- colorRampPalette(c("blue", col.LD))(5)
-col.lt5 <- "blue"
+col.lt5 <- "#313695"
 col.5to10 <- "#00D9D9"
 col.10to15 <- col.elev
 col.15to20 <- col.MD
 col.gt20 <- col.LD
-pal.depletion <- c("<5%"=col.lt5, "5-10%"=col.5to10, "10-15%"=col.10to15, "15-20%"=col.15to20, ">20%"=col.gt20)
+pal.depletion <- c(" 0-5% "=col.lt5, " 5-10%"=col.5to10, "10-15%"=col.10to15, "15-20%"=col.15to20, "> 20%"=col.gt20)
 pal.depletion.0to100 <- rev(c("#a50026",  "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                               "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695"))
 
