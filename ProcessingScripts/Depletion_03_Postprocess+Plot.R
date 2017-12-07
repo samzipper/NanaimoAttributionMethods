@@ -769,3 +769,52 @@ ggsave(paste0(dir.plot, "Depletion_02_FitByReach+Well_p.map.depletion.byReach.pn
                                         axis.ticks=element_blank(), strip.background=element_blank()),
                    ncol=1, heights=c(1, 0.7, 0.7)),
        width=12, height=8)
+
+
+####### investigate depletion <0 or depletion>100 cases #####
+# look at data
+min(df.prc$depletion.prc)
+max(df.prc$depletion.prc)
+
+min(df.prc$depletion.prc.modflow)
+max(df.prc$depletion.prc.modflow)
+
+# extract weird ones
+df.weird <- subset(df.prc, (depletion.prc.modflow < 0 | depletion.prc.modflow > 100) & recharge=="NORCH" & method=="IDLIN")
+df.weird.gt100 <- subset(df.weird, depletion.prc.modflow > 100)
+df.weird.lt0 <- subset(df.weird, depletion.prc.modflow < 100)
+
+length(unique(df.weird$well))
+length(unique(df.weird$reach))
+
+# map
+p.weird <-
+  ggplot() +
+  geom_raster(data=df.WTD, aes(x=long, y=lat, fill=WTD.m)) +
+  geom_path(data=df.LD.streams, aes(x=long, y=lat, group=group)) +
+  geom_path(data=subset(df.LD.streams, reach %in% unique(df.weird.lt0$reach)), aes(x=long, y=lat, group=group), color="blue") +
+  geom_path(data=subset(df.LD.streams, reach %in% unique(df.weird.gt100$reach)), aes(x=long, y=lat, group=group), color="red") +
+  geom_point(data=df.LD.wells, aes(x=X.world_coord.m., y=Y.world_coord.m.), shape=21) +
+  geom_point(data=subset(df.LD.wells, well %in% unique(df.weird.lt0$well)), aes(x=X.world_coord.m., y=Y.world_coord.m.), color="blue") +
+  geom_point(data=subset(df.LD.wells, well %in% unique(df.weird.gt100$well)), aes(x=X.world_coord.m., y=Y.world_coord.m.), color="red") +
+  scale_fill_gradient2(name="Water Table\nDepth [m]", low=pal.depletion.0to100[1], 
+                       mid=pal.depletion.0to100[6], high=pal.depletion.0to100[11], na.value=NA) +
+  labs(title="Weird Ones", subtitle="Blue: MODFLOW < 0% depletion; Red: MODFLOW > 100% depletion") +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  theme_scz()
+
+
+p.weird.well45 <-
+  ggplot() +
+  geom_raster(data=df.WTD, aes(x=long, y=lat, fill=WTD.m)) +
+  geom_path(data=df.LD.streams, aes(x=long, y=lat, group=group)) +
+  geom_path(data=subset(df.LD.streams, reach %in% unique(df.weird.lt0$reach[df.weird.lt0$well==45])), aes(x=long, y=lat, group=group), color="blue") +
+  geom_point(data=df.LD.wells, aes(x=X.world_coord.m., y=Y.world_coord.m.), shape=21) +
+  geom_point(data=subset(df.LD.wells, well %in% unique(df.weird.lt0$well[df.weird.lt0$well==45])), aes(x=X.world_coord.m., y=Y.world_coord.m.), color="blue") +
+  scale_fill_gradient2(name="Water Table\nDepth [m]", low=pal.depletion.0to100[1], 
+                       mid=pal.depletion.0to100[6], high=pal.depletion.0to100[11], na.value=NA) +
+  labs(title="Weird Ones: Well 45", subtitle="Blue Reach = -37% depletion") +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  theme_scz()
