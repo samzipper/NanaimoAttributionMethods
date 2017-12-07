@@ -22,6 +22,7 @@ prc.thres <- 5  # Reeves et al. (2009) used 5%
 
 ## load data
 df.all <- read.csv(paste0(dir.git, "data/Depletion_01_AggregateAllResults.csv"))
+df.WTD <- read.csv(paste0(dir.git, "data/Depletion_02_CalculateWTD.csv"))
 
 # make a wide-format version
 df.wide.LD <- dcast(subset(df.all, topography=="FLAT" & drainage.density=="LD"), drainage.density+well+reach+topography+recharge~method, value.var="depletion.prc")
@@ -314,6 +315,36 @@ ggsave(paste0(dir.plot, "Depletion_02_FitByReach+p.length.fit.png"),
        arrangeGrob(p.length.fit.box, p.length.hist, ncol=1), width=8, height=8, units="in")
 
 #### Elevation sensitivity analysis ####
+p.elev <- 
+  ggplot() +
+  geom_raster(data=df.WTD, aes(x=long, y=lat, fill=elev.ground.m)) +
+  geom_path(data=df.LD.streams, aes(x=long, y=lat, group=group), color="cyan") +
+  scale_fill_distiller(palette="Spectral", na.value=NA,
+                       limits=c(min(df.WTD$elev.ground.m, na.rm=T), max(df.WTD$elev.ground.m, na.rm=T))) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  theme_scz()
+
+p.head <- 
+  ggplot() +
+  geom_raster(data=df.WTD, aes(x=long, y=lat, fill=head.m)) +
+  geom_path(data=df.LD.streams, aes(x=long, y=lat, group=group), color="cyan") +
+  scale_fill_distiller(palette="Spectral", na.value=NA,
+                      limits=c(min(df.WTD$elev.ground.m, na.rm=T), max(df.WTD$elev.ground.m, na.rm=T))) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  theme_scz()
+
+p.WTD <- 
+  ggplot() +
+  geom_raster(data=df.WTD, aes(x=long, y=lat, fill=WTD.m)) +
+  geom_path(data=df.LD.streams, aes(x=long, y=lat, group=group), color="cyan") +
+  scale_fill_gradient2(low=pal.depletion.0to100[1], mid=pal.depletion.0to100[6], high=pal.depletion.0to100[11], na.value=NA) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  theme_scz()
+
+#
 p.elev.ByScenario.scatter <-
   ggplot(subset(df.prc, drainage.density=="LD" & recharge=="NORCH"), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
   geom_abline(slope=1, intercept=0) +
