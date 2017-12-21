@@ -141,11 +141,11 @@ p.fit.length.class <-
 
 ggsave(paste0(dir.fig, "Figure_Sensitivity_Length_Class.pdf"),
        p.fit.length.class,
-       width=86, height=60, units="mm")
+       width=95, height=60, units="mm", device=cairo_pdf)
 
 ggsave(paste0(dir.fig, "Figure_Sensitivity_Length_Class.png"),
        p.fit.length.class,
-       width=86, height=60, units="mm", dpi=300)
+       width=95, height=60, units="mm", dpi=300)
 
 ## For SI: plot by quartile
 df.fit.ByLength.quartile <- summarize(group_by(subset(df.prc, topography=="FLAT"), drainage.density, topography, recharge, method, length.km.quartile),
@@ -178,7 +178,7 @@ p.length.fit.box <-
   facet_wrap(~drainage.density, scales="free", ncol=1) +
   scale_y_continuous(name="KGE", limits=c(min(subset(df.fit.ByLength.quartile, !(method %in% c("IDLIN", "WEBLIN")))$KGE.overall), 
                                           max(subset(df.fit.ByLength.quartile, !(method %in% c("IDLIN", "WEBLIN")))$KGE.overall))) +
-  scale_x_discrete(name="Method", labels=labels.method) +
+  scale_x_discrete(name="Method", labels=labels.method.oneline) +
   scale_fill_manual(name="Length Quartile", labels=labels.quartile, values=pal.quartile) +
   theme_scz() +
   theme(legend.position="bottom",
@@ -209,32 +209,35 @@ ggsave(paste0(dir.fig, "SI_Figure_Sensitivity_Length_Quartile_NoLabels.pdf"),
                      p.length.ecdf + guides(fill="none", color="none") + theme(plot.margin=unit(c(1,0.5,0,0), "mm")), 
                      ncol=2), 
          length.legend, nrow=2, heights=c(12,1)),
-       width=86, height=126, units="mm")
+       width=95, height=126, units="mm", device=cairo_pdf)
 
 ## For SI: ternary plot
 p.length.fit.tern <-
   ggtern(subset(df.fit.ByLength.quartile, !(method %in% c("IDLIN", "WEBLIN"))), 
          aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=length.km.quartile)) +
   geom_point(alpha=0.9) +
-  facet_grid(method~drainage.density, switch="y", labeller=as_labeller(c(labels.method, labels.density))) +
-  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
+  facet_grid(method~drainage.density, switch="y", labeller=as_labeller(c(labels.method, labels.density.long))) +
+  labs(x="% Bias", y="% Variability", z="% Correlation") +
   scale_color_manual(name="Length Quartile", labels=labels.quartile, values=pal.quartile) +
   scale_size_continuous(name="KGE", breaks=seq(-0.5, 0.5, 0.5), labels=c("0.5", "0", "-0.5")) +
   theme_rgbw(base_size=8, base_family="Arial") +
   theme(text=element_text(family="Arial", size=8, color="black"),
         axis.title=element_text(face="bold", size=rel(1)),
+        axis.text=element_text(size=rel(1)),
+        strip.text=element_text(size=rel(1)),
         tern.axis.title=element_blank(),
         tern.panel.grid.major=element_blank(),
         legend.position="bottom",
         legend.background=element_blank(),
         legend.title=element_text(face="bold", size=rel(1)),
+        legend.text=element_text(size=rel(1)),
         legend.key=element_blank(),
         #tern.axis.arrow.sep=0.075,
-        tern.axis.arrow.start=0.15,
+        tern.axis.arrow.start=0.2,
         tern.axis.arrow.finish=0.85,
         tern.axis.arrow.text=element_text(face="bold", size=rel(1))) +
   guides(size=guide_legend(reverse=T, order=2),
          color=guide_legend(order=1))
 
-ggsave(paste0(dir.fig, "SI_Figure_Sensitivity_Length_Ternary.png"), p.length.fit.tern, width=6.5, height=6, units="in")
-ggsave(paste0(dir.fig, "SI_Figure_Sensitivity_Length_Ternary.pdf"), p.length.fit.tern, width=6.5, height=6, units="in", device=cairo_pdf)
+ggsave(paste0(dir.fig, "SI_Figure_Sensitivity_Length_Ternary.png"), p.length.fit.tern, width=190, height=170, units="mm")
+ggsave(paste0(dir.fig, "SI_Figure_Sensitivity_Length_Ternary.pdf"), p.length.fit.tern, width=190, height=170, units="mm", device=cairo_pdf)

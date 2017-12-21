@@ -71,7 +71,7 @@ p$heights <- unit.pmax(p1$heights, p2$heights, p3$heights)
 
 # save output
 ggsave(paste0(dir.fig, "Figure_Map_Elevation.png"),
-       p, width=176, height=120, units="mm", dpi=300)
+       p, width=190, height=135, units="mm", dpi=300)
 
 ggsave(paste0(dir.fig, "Figure_Map_Elevation.pdf"),
-       p, width=176, height=120, units="mm", device=cairo_pdf)
+       p, width=190, height=135, units="mm", device=cairo_pdf)

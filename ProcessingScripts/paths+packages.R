@@ -67,9 +67,11 @@ pal.length.class <- c("<0.1"=pal.depletion.0to100[11], "0.1-0.5"=pal.depletion.0
 
 ## labels
 labels.recharge <- c("NORCH"="0 mm", "RCH10"="10 mm", "RCH50"="50 mm", "RCH100"="100 mm", "RCH500"="500 mm", "RCH1000"="1000 mm")
-labels.method <- c("THIESSEN"="TPOLY", "IDLIN"="ID", "IDLINSQ"="IDS", "WEBLIN"="WID", "WEBLINSQ"="WIDS")
+labels.method <- c("THIESSEN"="Thiessen", "IDLIN"="Inverse", "IDLINSQ"="Inverse\nSquared", "WEBLIN"="Web", "WEBLINSQ"="Web\nSquared")
+labels.method.oneline <- c("THIESSEN"="Thiessen", "IDLIN"="Inverse", "IDLINSQ"="Inv. Sq.", "WEBLIN"="Web", "WEBLINSQ"="Web Sq.")
 labels.quartile <- c("Q1"="0-25%", "Q2"="25-50%", "Q3"="50-75%", "Q4"="75-100%")
-labels.density <- c("HD"="HD", "MD"="MD", "LD"="LD")
+labels.density <- c("HD"="High", "MD"="Medium", "LD"="Low")
+labels.density.long <- c("HD"="High Density", "MD"="Medium Density", "LD"="Low Density")
 
 ## paths
 # path to directory on GSAS with data
@@ -122,11 +124,14 @@ R2 <- function(sim, obs) {
 ## ggplot theme
 windowsFonts(Arial=windowsFont("TT Arial"))
 theme_scz <- function(...){
-  theme_bw() + 
+  theme_bw(base_size=8, base_family="Arial") + 
     theme(
-      text=element_text(size=8, color="black"),
+      text=element_text(color="black"),
       axis.title=element_text(face="bold", size=rel(1)),
+      axis.text=element_text(size=rel(1)),
+      strip.text=element_text(size=rel(1)),
       legend.title=element_text(face="bold", size=rel(1)),
+      legend.text=element_text(size=rel(1)),
       panel.grid=element_blank())
 }
 

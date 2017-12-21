@@ -90,7 +90,7 @@ ggsave(paste0(dir.fig, "Figure_Baseline_Scatter+Dens_NoLabels.pdf"),
        arrangeGrob(p.ByScenario.scatter + theme(plot.margin=unit(c(1.5,3,0,0), "mm")), 
                    p.ByScenario.dens + theme(plot.margin=unit(c(3,3,0,0), "mm")), 
                    ncol=1, heights=c(1.1, 1)), 
-       width=185, height=95, units="mm", device=cairo_pdf)
+       width=190, height=95, units="mm", device=cairo_pdf)
 
 # linear fits in scatterplot
 summary(lm(depletion.prc.modflow ~ depletion.prc, data=subset(df.prc, method=="THIESSEN" & drainage.density=="HD" & topography=="FLAT" & recharge=="NORCH")))

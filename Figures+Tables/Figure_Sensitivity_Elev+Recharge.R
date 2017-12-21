@@ -86,7 +86,7 @@ p.recharge.fit.ByScenario.tern.facet <-
   geom_point() +
   facet_wrap(~recharge, ncol=4, labeller=as_labeller(c("NORCH"="(i) 0 mm", "RCH10"="(j) 10 mm", 
                                                        "RCH100"="(k) 100 mm", "RCH1000"="(l) 1000 mm"))) +
-  labs(x="Bias", y="Variability", z="Correlation") +
+  labs(x="% Bias", y="% Variability", z="% Correlation") +
   scale_color_manual(name="Method", values=pal.method, labels=labels.method) +
   scale_size_continuous(name="KGE", breaks=seq(-0.5,0,0.25), labels=c("0.5", "0.25", "0.0"), limits=c(-0.6,0.0)) +
 #  theme_rgbw() +
@@ -94,7 +94,11 @@ p.recharge.fit.ByScenario.tern.facet <-
                col.L = "darkblue", 
                col.R = "darkgreen") +
   theme(text=element_text(family="Arial", size=8, color="black"),
+        axis.title=element_text(face="bold", size=rel(1)),
+        axis.text=element_text(size=rel(1)),
+        strip.text=element_text(size=rel(1)),
         tern.axis.title=element_blank(),
+        tern.axis.arrow.text=element_text(face="bold", size=rel(1)),
         tern.axis.arrow.start=0.15,
         tern.axis.arrow.finish=0.85,
         tern.panel.grid.major=element_blank(),
@@ -103,6 +107,7 @@ p.recharge.fit.ByScenario.tern.facet <-
         tern.axis.arrow.show = TRUE,
         legend.title=element_text(face="bold", size=rel(1)),
         legend.background=element_blank(),
+        legend.text=element_text(size=rel(1)),
         legend.key=element_blank(),
         legend.position="bottom",
         legend.box="vertical",
@@ -128,7 +133,7 @@ ggsave(paste0(dir.fig, "Figure_Sensitivity_Elev+Recharge.png"),
                                    tern.axis.vshift=0.1),
                            recharge.legend,
                            ncol=1, heights=c(3, 1.5, 0.4)),
-       width=176, height=156, units="mm", dpi=300)
+       width=190, height=156, units="mm", dpi=300)
 
 ggsave(paste0(dir.fig, "Figure_Sensitivity_Elev+Recharge.pdf"),
        ggtern::arrangeGrob(p, 
@@ -138,4 +143,4 @@ ggsave(paste0(dir.fig, "Figure_Sensitivity_Elev+Recharge.pdf"),
                                    tern.axis.vshift=0.1),
                            recharge.legend,
                            ncol=1, heights=c(3, 1.5, 0.4)),
-       width=176, height=156, units="mm", device=cairo_pdf)
+       width=190, height=156, units="mm", device=cairo_pdf)

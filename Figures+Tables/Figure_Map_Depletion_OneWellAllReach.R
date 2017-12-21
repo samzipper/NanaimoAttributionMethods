@@ -11,6 +11,9 @@ dir.git <- "C:/Users/Sam/WorkGits/NanaimoAttributionMethods/"
 # load paths + packages
 source(paste0(dir.git, "ProcessingScripts/paths+packages.R"))
 
+## load data
+df.all <- read.csv(paste0(dir.git, "data/Depletion_01_AggregateAllResults.csv"))
+
 ## load and prep data
 # load data
 shp.LD.boundary <- readOGR(paste0(dir.GSAS, "GIS"), layer="LD_boundary_aquifer")
@@ -144,7 +147,8 @@ df.HD.streams.all$method <- factor(df.HD.streams.all$method, levels=c("MODFLOW",
 ## make plots
 p.HD.byWell <-
   ggplot(data=df.HD.streams.all, aes(x=long, y=lat)) +
-  facet_wrap(~method, ncol=6) +
+  facet_wrap(~method, ncol=6, 
+             labeller=as_labeller(c("MODFLOW"="MODFLOW", labels.method))) +
   geom_polygon(data=df.HD.boundary, aes(x=long, y=lat), color="black", fill=NA) +
   #  geom_point(data=df.HD.wells, aes(x=X.world_coord.m., y=Y.world_coord.m.), color="black", shape=21) +
   geom_path(aes(group=group, color=depletion.prc.class), size=1) +
@@ -215,4 +219,4 @@ depletion.legend <- g_legend(p.LD.byWell +
 # save output
 ggsave(paste0(dir.fig, "Figure_Map_Depletion_OneWellAllReach_NoLabels.pdf"),
        grid.arrange(p, depletion.legend, heights=c(8,1)), 
-       width=176, height=120, units="mm", device=cairo_pdf)
+       width=190, height=135, units="mm", device=cairo_pdf)

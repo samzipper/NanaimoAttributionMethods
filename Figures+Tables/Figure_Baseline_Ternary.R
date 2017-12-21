@@ -53,23 +53,25 @@ p.fit.ByScenario.tern <-
          aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method, shape=drainage.density)) +
   geom_point(alpha=0.75) +
   labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
-  scale_color_manual(name="Method", values=pal.method, labels=labels.method) +
-  scale_shape_discrete(name="Drainage Density") +
+  scale_color_manual(name=NULL, values=pal.method, labels=labels.method) +
+  scale_shape_discrete(name="Drainage Density", labels=labels.density) +
   scale_size_continuous(name="KGE", breaks=seq(-0.6, 0, 0.2), labels=c("0.6", "0.4", "0.2", "0.0")) +
   theme_rgbw(base_size=8, base_family="Arial") +
-  theme(text=element_text(family="Arial", size=8, color="black"),
+  theme(text=element_text(color="black"),
         axis.title=element_text(face="bold", size=rel(1)),
+        axis.text=element_text(size=rel(1)),
         tern.axis.title=element_blank(),
         tern.panel.grid.major=element_blank(),
         legend.position="bottom",
         legend.box="vertical",
-        legend.box.margin=margin(-6,0,0,0, "mm"),
+        legend.box.margin=margin(-3,0,0,0, "mm"),
         legend.background=element_blank(),
         legend.title=element_text(face="bold", size=rel(1)),
+        legend.text=element_text(size=rel(1)),
         legend.spacing.y=unit(-4, "mm"),
         legend.key=element_blank(),
         legend.text.align=0,
-        tern.axis.arrow.sep=0.075,
+        tern.axis.arrow.sep=0.085,
         tern.axis.arrow.start=0.15,
         tern.axis.arrow.finish=0.85,
         tern.axis.arrow.text=element_text(face="bold", size=rel(1)),
@@ -80,8 +82,8 @@ p.fit.ByScenario.tern <-
 
 ggsave(paste0(dir.fig, "Figure_Baseline_Ternary.pdf"), 
        p.fit.ByScenario.tern, 
-       width=86, height=86, units="mm", device=cairo_pdf)
+       width=95, height=95, units="mm", device=cairo_pdf)
 
 ggsave(paste0(dir.fig, "Figure_Baseline_Ternary.png"), 
        p.fit.ByScenario.tern, 
-       width=86, height=86, units="mm", dpi=300)
+       width=95, height=95, units="mm", dpi=300)

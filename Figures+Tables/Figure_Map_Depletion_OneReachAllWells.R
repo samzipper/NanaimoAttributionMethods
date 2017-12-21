@@ -350,7 +350,7 @@ depletion.legend <- g_legend(p.LD.byReach +
 # save output
 ggsave(paste0(dir.fig, "Figure_Map_Depletion_OneReachAllWells_NoLabels.pdf"),
        grid.arrange(p, depletion.legend, heights=c(8,1)), 
-       width=176, height=120, units="mm", device=cairo_pdf)
+       width=190, height=135, units="mm", device=cairo_pdf)
 
 # # make all plots via facet_grid
 # df.HD.depletion.all$drainage.density <- "HD"

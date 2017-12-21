@@ -1,1 +1,6 @@
-Hydrogeology Journal: column width = 8.6 cm, page width = 17.6 cm
+Hydrogeology Journal
+column width = 8.6 cm, page width = 17.6 cm
+
+WRR:
+1/4 page figure = 95 mm x 115 mm
+Full page = 190 mm x 230 mm

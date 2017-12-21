@@ -704,7 +704,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="2.29"
-     inkscape:cx="392.03093"
+     inkscape:cx="318.45014"
      inkscape:cy="93.324248"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -715,7 +715,7 @@
      fit-margin-bottom="0"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
-     inkscape:window-x="1912"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="false"
@@ -778,7 +778,7 @@
          id="tspan4544"
          x="1.1236579"
          y="145.57657"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(a) Thiessen Polygon (TPOLY)</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(a) Thiessen Polygon</tspan></text>
     <circle
        style="opacity:1;fill:#d01d1d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4910"
@@ -893,7 +893,12 @@
          id="tspan4544-8"
          x="189.94991"
          y="145.57657"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(b) Inverse Distance (ID, IDS)</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(b) Inverse Distance</tspan><tspan
+         sodipodi:role="line"
+         x="189.94991"
+         y="158.07657"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial"
+         id="tspan4504">     (Squared)</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#2d8989;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 221.38957,205.12823 c 13.05028,-32.18602 53.95606,-7.95605 73,-27 3.3947,-3.39469 6.16202,-17.08101 10,-19 19.24117,-9.62058 19.35396,2.58416 26,-24"
@@ -1006,7 +1011,7 @@
          x="377.56277"
          y="158.07657"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial"
-         id="tspan4503">     (WID, WIDS)</tspan></text>
+         id="tspan4503">     (Squared)</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#2d8989;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 409.00246,204.83781 c 13.05028,-32.18602 53.95606,-7.95605 73,-27 3.3947,-3.39469 6.16202,-17.08101 10,-19 19.24117,-9.62058 19.35396,2.58416 26,-24"

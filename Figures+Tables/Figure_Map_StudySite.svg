@@ -16,7 +16,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="Figure_StudySiteMap.svg"
+   sodipodi:docname="Figure_Map_StudySite.svg"
    inkscape:export-filename="C:\Users\Sam\WorkGits\NanaimoAttributionMethods\Figures+Tables\Figure_Map_StudySite.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
@@ -531,7 +531,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="2.16"
-     inkscape:cx="326.85721"
+     inkscape:cx="248.84795"
      inkscape:cy="170.12729"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -553,7 +553,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -3821,38 +3821,38 @@
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="5.2989364"
-       y="93.287888"
+       y="104.36197"
        id="text4542-4"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544-7"
          x="5.2989364"
-         y="93.287888"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">HD</tspan></text>
+         y="104.36197"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">High</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="73.580353"
+       x="52.506279"
        y="15.2791"
        id="text4542-4-1"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544-7-5"
-         x="73.580353"
+         x="52.506279"
          y="15.2791"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">MD</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">Medium</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="197.11952"
+       x="193.11952"
        y="23.2791"
        id="text4542-4-4"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544-7-4"
-         x="197.11952"
+         x="193.11952"
          y="23.2791"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">LD</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">Low</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -9074,39 +9074,39 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="519.33881"
+       x="513.33881"
        y="38.427246"
        id="text4542-4-4-1"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544-7-4-7"
-         x="519.33881"
+         x="513.33881"
          y="38.427246"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">LD</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">Low</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="401.74615"
-       y="170.83466"
+       x="405.44986"
+       y="166.66798"
        id="text4542-4-4-1-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544-7-4-7-5"
-         x="401.74615"
-         y="170.83466"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">MD</tspan></text>
+         x="405.44986"
+         y="166.66798"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">Medium</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="442.23624"
-       y="84.649467"
+       x="438.23624"
+       y="86.649467"
        id="text4542-4-4-1-7-3"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4544-7-4-7-5-4"
-         x="442.23624"
-         y="84.649467"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">HD</tspan></text>
+         x="438.23624"
+         y="86.649467"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">High</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
