@@ -87,3 +87,7 @@ ggsave(paste0(dir.fig, "Figure_Baseline_Ternary.pdf"),
 ggsave(paste0(dir.fig, "Figure_Baseline_Ternary.png"), 
        p.fit.ByScenario.tern, 
        width=95, height=95, units="mm", dpi=300)
+
+subset(df.fit.ByScenario, topography=="FLAT" & method=="WEBLINSQ")
+subset(df.fit.ByScenario, topography=="FLAT" & method=="IDLINSQ")
+subset(df.fit.ByScenario, topography=="FLAT" & method=="THIESSEN")

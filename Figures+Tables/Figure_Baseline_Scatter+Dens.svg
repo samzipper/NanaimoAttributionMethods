@@ -3171,9 +3171,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.18"
-     inkscape:cx="265.41232"
-     inkscape:cy="168.42669"
+     inkscape:zoom="1.55"
+     inkscape:cx="336.64448"
+     inkscape:cy="213.90957"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -3181,8 +3181,8 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-width="1536"
+     inkscape:window-height="801"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
@@ -3194,7 +3194,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -22780,7 +22780,7 @@
    id="tspan119641-9-7">Low</tspan></tspan></text>
     <g
        id="g144272"
-       transform="translate(-2.8934332,4.1121092)">
+       transform="translate(5.1065668,4.1121092)">
       <rect
          y="-12.136467"
          x="49.118546"
@@ -22802,7 +22802,7 @@
            sodipodi:role="line">Thiessen Polygon</tspan></text>
     </g>
     <g
-       transform="translate(100.63552,4.1121092)"
+       transform="translate(143.96048,4.1121092)"
        id="g144272-3">
       <rect
          y="-12.136467"
@@ -22825,7 +22825,7 @@
            sodipodi:role="line">Inverse Distance</tspan></text>
     </g>
     <g
-       transform="translate(199.37932,4.1121092)"
+       transform="translate(278.02923,4.1121092)"
        id="g144272-3-3">
       <rect
          y="-12.136467"
@@ -22848,7 +22848,7 @@
            sodipodi:role="line">Inverse Distance Squared</tspan></text>
     </g>
     <g
-       transform="translate(338.4405,4.1121092)"
+       transform="translate(452.41537,4.1121092)"
        id="g144272-3-2">
       <rect
          y="-12.136467"
@@ -22868,10 +22868,10 @@
            y="-4.5573654"
            x="60.055656"
            id="tspan4544-9-0-23-5-0"
-           sodipodi:role="line">Web Inverse Distance</tspan></text>
+           sodipodi:role="line">Web</tspan></text>
     </g>
     <g
-       transform="translate(460.36787,4.1121092)"
+       transform="translate(532.36795,4.1121092)"
        id="g144272-3-3-5">
       <rect
          y="-12.136467"
@@ -22891,7 +22891,7 @@
            y="-4.5573654"
            x="60.055656"
            id="tspan4544-9-0-23-5-4-4"
-           sodipodi:role="line">Web Inverse Distance Squared</tspan></text>
+           sodipodi:role="line">Web Squared</tspan></text>
     </g>
   </g>
 </svg>
