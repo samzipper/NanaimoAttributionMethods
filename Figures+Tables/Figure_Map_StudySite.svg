@@ -531,7 +531,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="2.16"
-     inkscape:cx="248.84795"
+     inkscape:cx="170.83869"
      inkscape:cy="170.12729"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -3371,7 +3371,7 @@
          id="tspan4544"
          x="2.9337018"
          y="13.743237"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(a)</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.5px;font-family:Arial;-inkscape-font-specification:Arial">(a)</tspan></text>
     <g
        id="g4872"
        transform="translate(2,-1.9187622)">
@@ -3864,7 +3864,7 @@
          id="tspan4544-00"
          x="269.22058"
          y="83.67038"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(b)</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.5px;font-family:Arial;-inkscape-font-specification:Arial">(b)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -9316,6 +9316,6 @@
          id="tspan4544-3"
          x="356.4003"
          y="13.743237"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(c)</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.5px;font-family:Arial;-inkscape-font-specification:Arial">(c)</tspan></text>
   </g>
 </svg>

@@ -214,12 +214,12 @@ ggsave(paste0(dir.fig, "SI_Figure_Sensitivity_Length_Quartile_NoLabels.pdf"),
 ## For SI: ternary plot
 p.length.fit.tern <-
   ggtern(subset(df.fit.ByLength.quartile, !(method %in% c("IDLIN", "WEBLIN"))), 
-         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=length.km.quartile)) +
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=KGE.overall, color=length.km.quartile)) +
   geom_point(alpha=0.9) +
   facet_grid(method~drainage.density, switch="y", labeller=as_labeller(c(labels.method, labels.density.long))) +
   labs(x="% Bias", y="% Variability", z="% Correlation") +
   scale_color_manual(name="Length Quartile", labels=labels.quartile, values=pal.quartile) +
-  scale_size_continuous(name="KGE", breaks=seq(-0.5, 0.5, 0.5), labels=c("0.5", "0", "-0.5")) +
+  scale_size_continuous(name="KGE") +
   theme_rgbw(base_size=8, base_family="Arial") +
   theme(text=element_text(family="Arial", size=8, color="black"),
         axis.title=element_text(face="bold", size=rel(1)),
@@ -236,7 +236,7 @@ p.length.fit.tern <-
         tern.axis.arrow.start=0.2,
         tern.axis.arrow.finish=0.85,
         tern.axis.arrow.text=element_text(face="bold", size=rel(1))) +
-  guides(size=guide_legend(reverse=T, order=2),
+  guides(size=guide_legend(reverse=F, order=2),
          color=guide_legend(order=1))
 
 ggsave(paste0(dir.fig, "SI_Figure_Sensitivity_Length_Ternary.png"), p.length.fit.tern, width=190, height=170, units="mm")

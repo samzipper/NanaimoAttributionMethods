@@ -50,18 +50,18 @@ df.fit.ByScenario <- summarize(group_by(df.prc, drainage.density, topography, re
 # ternary plots
 p.fit.ByScenario.tern <-
   ggtern(subset(df.fit.ByScenario, recharge=="NORCH" & topography=="FLAT"), 
-         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method, shape=drainage.density)) +
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=KGE.overall, color=method, shape=drainage.density)) +
   geom_point(alpha=0.75) +
   labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
   scale_color_manual(name=NULL, values=pal.method, labels=labels.method) +
   scale_shape_discrete(name="Drainage Density", labels=labels.density) +
-  scale_size_continuous(name="KGE", breaks=seq(-0.6, 0, 0.2), labels=c("0.6", "0.4", "0.2", "0.0")) +
+  scale_size_continuous(name="KGE", breaks=seq(0, 0.6, 0.2)) +
   theme_rgbw(base_size=8, base_family="Arial") +
   theme(text=element_text(color="black"),
         axis.title=element_text(face="bold", size=rel(1)),
         axis.text=element_text(size=rel(1)),
         tern.axis.title=element_blank(),
-        tern.panel.grid.major=element_blank(),
+        tern.panel.grid.major=element_line(linetype="solid", size=rel(0.5)),
         legend.position="bottom",
         legend.box="vertical",
         legend.box.margin=margin(-3,0,0,0, "mm"),
@@ -76,17 +76,51 @@ p.fit.ByScenario.tern <-
         tern.axis.arrow.finish=0.85,
         tern.axis.arrow.text=element_text(face="bold", size=rel(1)),
         plot.margin=unit(c(-8,-8,0,-8), "mm")) +
-  guides(size=guide_legend(reverse=T, order=3),
+  guides(size=guide_legend(reverse=F, order=3),
          color=guide_legend(order=1),
          shape=guide_legend(order=2))
 
-ggsave(paste0(dir.fig, "Figure_Baseline_Ternary.pdf"), 
-       p.fit.ByScenario.tern, 
-       width=95, height=95, units="mm", device=cairo_pdf)
+# ggtern::ggsave(paste0(dir.fig, "Figure_Baseline_Ternary.pdf"), 
+#        p.fit.ByScenario.tern, 
+#        width=95, height=95, units="mm", device=cairo_pdf)
+# 
+# ggsave(paste0(dir.fig, "Figure_Baseline_Ternary.png"), 
+#        p.fit.ByScenario.tern, 
+#        width=95, height=95, units="mm", dpi=300)
 
-ggsave(paste0(dir.fig, "Figure_Baseline_Ternary.png"), 
-       p.fit.ByScenario.tern, 
-       width=95, height=95, units="mm", dpi=300)
+# ternary plots
+p.tern.empty <-
+  ggtern() +
+  geom_point(alpha=0.75) +
+  labs(x="% MSE due to Bias", y="% MSE due to Variability", z="% MSE due to Correlation") +
+  scale_color_manual(name=NULL, values=pal.method, labels=labels.method) +
+  scale_shape_discrete(name="Drainage Density", labels=labels.density) +
+  scale_size_continuous(name="KGE", breaks=seq(-0.6, 0, 0.2), labels=c("0.6", "0.4", "0.2", "0.0")) +
+  theme_rgbw(base_size=8, base_family="Arial") +
+  theme(text=element_text(color="black"),
+        axis.title=element_text(face="bold", size=rel(1)),
+        axis.text=element_text(size=rel(1)),
+        tern.axis.title=element_blank(),
+        tern.panel.grid.major=element_blank(),
+        tern.panel.grid.minor=element_blank(),
+        legend.position="bottom",
+        legend.box="vertical",
+        legend.box.margin=margin(-3,0,0,0, "mm"),
+        legend.background=element_blank(),
+        legend.title=element_text(face="bold", size=rel(1)),
+        legend.text=element_text(size=rel(1)),
+        legend.spacing.y=unit(-4, "mm"),
+        legend.key=element_blank(),
+        legend.text.align=0,
+        tern.axis.arrow.sep=0.085,
+        tern.axis.arrow.start=0.15,
+        tern.axis.arrow.finish=0.85,
+        tern.axis.arrow.text=element_text(face="bold", size=rel(1)),
+        plot.margin=unit(c(-8,-8,0,-8), "mm"))
+
+ggsave(paste0(dir.fig, "Figure_Baseline_Ternary+Text_Empty.pdf"), 
+       ggtern::arrangeGrob(p.fit.ByScenario.tern, p.tern.empty, ncol=2),
+       width=190, height=95, units="mm", device=cairo_pdf)
 
 subset(df.fit.ByScenario, topography=="FLAT" & method=="WEBLINSQ")
 subset(df.fit.ByScenario, topography=="FLAT" & method=="IDLINSQ")

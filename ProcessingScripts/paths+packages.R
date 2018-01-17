@@ -47,12 +47,12 @@ pal.depletion <- c(" 0-5% "=col.lt5, " 5-10%"=col.5to10, "10-15%"=col.10to15, "1
 pal.depletion.0to100 <- rev(c("#a50026",  "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                               "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695"))
 
-# from http://colorbrewer2.org/#type=qualitative&scheme=Dark2&n=5
-col.TP <- "#1b9e77"
-col.ID <- "#d95f02"
-col.ID2 <- "#7570b3"
-col.WID <- "#e7298a"
-col.WID2 <- "#66a61e"
+# from https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
+col.TP <- "#3cb44b"   # green
+col.ID <- "#ffe119"   # yellow
+col.ID2 <- "#f58231"  # orange
+col.WID <- "#e6194b"  # red
+col.WID2 <- "#0082c8" # blue
 pal.method <- c("THIESSEN"=col.TP, "IDLIN"=col.ID, "IDLINSQ"=col.ID2, "WEBLIN"=col.WID, "WEBLINSQ"=col.WID2)
 
 # stream length quartile

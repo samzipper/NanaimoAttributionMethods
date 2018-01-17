@@ -55,8 +55,8 @@ p.recharge.ByScenario.scatter <-
   geom_point(shape=21, alpha=0.5) +
   stat_smooth(method="lm", se=F) +
   facet_wrap(~recharge, ncol=4, scales="free",
-             labeller=as_labeller(c("NORCH"="(a) 0 mm", "RCH10"="(b) 10 mm", 
-                                    "RCH100"="(c) 100 mm", "RCH1000"="(d) 1000 mm"))) +
+             labeller=as_labeller(c("NORCH"="(a) 0 mm recharge", "RCH10"="(b) 10 mm recharge", 
+                                    "RCH100"="(c) 100 mm recharge", "RCH1000"="(d) 1000 mm recharge"))) +
   scale_x_continuous(name="Analytical Depletion [%]", breaks=seq(0,100,25), limits=c(0,100)) +
   scale_y_continuous(name="MODFLOW Depletion [%]", 
                      limits=c(min(subset(df.prc, drainage.density=="LD" & topography=="ELEV")$depletion.prc.modflow), 
@@ -70,8 +70,8 @@ p.recharge.depletion.diff.dens.noZeros <-
   ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV" & recharge %in% c("NORCH", "RCH10", "RCH100", "RCH1000")), aes(x=depletion.diff.prc, fill=method, color=method)) +
   geom_density(alpha=0.2) +
   geom_vline(xintercept=0) +
-  facet_wrap(~recharge, scales="free", ncol=4, labeller=as_labeller(c("NORCH"="(e) 0 mm", "RCH10"="(f) 10 mm", 
-                                                                      "RCH100"="(g) 100 mm", "RCH1000"="(h) 1000 mm"))) +
+  facet_wrap(~recharge, scales="free", ncol=4, labeller=as_labeller(c("NORCH"="(e) 0 mm recharge", "RCH10"="(f) 10 mm recharge", 
+                                                                      "RCH100"="(g) 100 mm recharge", "RCH1000"="(h) 1000 mm recharge"))) +
   scale_x_continuous(name="Analytical - MODFLOW Depletion [%]") +
   scale_y_continuous(name="Density") +
   scale_fill_manual(name="Method", values=pal.method) +
@@ -82,13 +82,13 @@ p.recharge.depletion.diff.dens.noZeros <-
 
 p.recharge.fit.ByScenario.tern.facet <-
   ggtern(subset(df.fit.ByScenario, drainage.density=="LD" & topography=="ELEV" & recharge %in% c("NORCH", "RCH10", "RCH100", "RCH1000")), 
-         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=-KGE.overall, color=method)) +
+         aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=KGE.overall, color=method)) +
   geom_point() +
-  facet_wrap(~recharge, ncol=4, labeller=as_labeller(c("NORCH"="(i) 0 mm", "RCH10"="(j) 10 mm", 
-                                                       "RCH100"="(k) 100 mm", "RCH1000"="(l) 1000 mm"))) +
+  facet_wrap(~recharge, ncol=4, labeller=as_labeller(c("NORCH"="(i) 0 mm recharge", "RCH10"="(j) 10 mm recharge", 
+                                                       "RCH100"="(k) 100 mm recharge", "RCH1000"="(l) 1000 mm recharge"))) +
   labs(x="% Bias", y="% Variability", z="% Correlation") +
   scale_color_manual(name="Method", values=pal.method, labels=labels.method) +
-  scale_size_continuous(name="KGE", breaks=seq(-0.5,0,0.25), labels=c("0.5", "0.25", "0.0"), limits=c(-0.6,0.0)) +
+  scale_size_continuous(name="KGE", breaks=seq(0,0.5,0.25), limits=c(0,0.6)) +
 #  theme_rgbw() +
   theme_custom(col.T = "darkred", 
                col.L = "darkblue", 
@@ -112,7 +112,8 @@ p.recharge.fit.ByScenario.tern.facet <-
         legend.position="bottom",
         legend.box="vertical",
         strip.background=element_blank()) +
-  guides(size=guide_legend(reverse=T))
+  guides(size=guide_legend(reverse=F, order=2),
+         color=guide_legend(order=1))
 
 recharge.legend <- g_legend(p.recharge.fit.ByScenario.tern.facet + theme(legend.spacing.y=unit(-4, "mm")))
 

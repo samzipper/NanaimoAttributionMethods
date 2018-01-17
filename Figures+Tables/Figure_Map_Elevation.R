@@ -52,14 +52,15 @@ p.WTD <-
   geom_raster(data=df.WTD.melt, aes(x=long, y=lat, fill=WTD)) +
   geom_path(data=df.LD.streams, aes(x=long, y=lat, group=group), color="black") +
   facet_wrap(~recharge, ncol=4, 
-             labeller=as_labeller(c("NORCH"="(b) 0 mm", "RCH10"="(c) 10 mm", "RCH100"="(d) 100 mm", "RCH1000"="(e) 1000 mm"))) +
+             labeller=as_labeller(c("NORCH"="(b) 0 mm recharge", "RCH10"="(c) 10 mm recharge", "RCH100"="(d) 100 mm recharge", "RCH1000"="(e) 1000 mm recharge"))) +
   scale_fill_gradient2(name="(b-e) Water Table Depth [m]", low=pal.depletion.0to100[1], 
                        mid=pal.depletion.0to100[6], high=pal.depletion.0to100[11], na.value=NA) +
   scale_x_continuous(name="Easting [m]", expand=c(0,0)) +
   scale_y_continuous(name="Northing [m]", expand=c(0,0)) +
   coord_equal() +
   theme_scz() +
-  theme(legend.position="top") +
+  theme(legend.position="top",
+        strip.background=element_blank()) +
   guides(fill=guide_colorbar(title.position="top", title.hjust=0.5))
 
 # save output

@@ -1,5 +1,5 @@
-## Figure_Map_StudySite_Subdomains.R
-#' Figure showing HD, MD, and LD subdomains.
+## Figure_Map_Depletino_OneWellAllReach.R
+#' Figure showing depletion across all reaches for a single pumping well.
 #' 
 #' Must be connected to GSAS server.
 
