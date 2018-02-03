@@ -43,6 +43,9 @@ df.fit.ByScenario <- summarize(group_by(df.prc, drainage.density, topography, re
                                cor = cor(depletion.prc, depletion.prc.modflow, method="pearson"),
                                bias = pbias(depletion.prc, depletion.prc.modflow),
                                R2 = R2(depletion.prc, depletion.prc.modflow),
+                               MSE.bias = MSE.bias(depletion.prc, depletion.prc.modflow),
+                               MSE.var = MSE.var(depletion.prc, depletion.prc.modflow),
+                               MSE.cor = MSE.cor(depletion.prc, depletion.prc.modflow),
                                MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
                                MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
                                MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
@@ -54,7 +57,28 @@ df.fit.table <- dcast(df.fit.ByScenario[,c("drainage.density", "topography", "re
                       drainage.density + topography + recharge ~ method, value.var="KGE.overall")
 df.fit.table[,4:8] <- round(df.fit.table[,4:8], 3)
 
+## table of MSE
+df.MSE.table <- dcast(df.fit.ByScenario[,c("drainage.density", "topography", "recharge", "method", "MSE.overall")],
+                      drainage.density + topography + recharge ~ method, value.var="MSE.overall")
+df.MSE.table[,4:8] <- round(df.MSE.table[,4:8], 1)
+
 ## table of bias
 df.bias.table <- dcast(df.fit.ByScenario[,c("drainage.density", "topography", "recharge", "method", "bias")],
                       drainage.density + topography + recharge ~ method, value.var="bias")
 df.bias.table[,4:8] <- round(df.bias.table[,4:8], 3)
+
+## test...
+df.test <- subset(df.prc, drainage.density=="LD" & topography=="ELEV" & recharge=="RCH1000")
+df.fit.test <- summarize(group_by(df.test, method),
+                         n.reach = sum(is.finite(depletion.prc)),
+                         cor = cor(depletion.prc, depletion.prc.modflow, method="pearson"),
+                         bias = pbias(depletion.prc, depletion.prc.modflow),
+                         R2 = R2(depletion.prc, depletion.prc.modflow),
+                         MSE.bias = MSE.bias(depletion.prc, depletion.prc.modflow),
+                         MSE.var = MSE.var(depletion.prc, depletion.prc.modflow),
+                         MSE.cor = MSE.cor(depletion.prc, depletion.prc.modflow),
+                         MSE.bias.norm = MSE.bias.norm(depletion.prc, depletion.prc.modflow),
+                         MSE.var.norm = MSE.var.norm(depletion.prc, depletion.prc.modflow),
+                         MSE.cor.norm = MSE.cor.norm(depletion.prc, depletion.prc.modflow),
+                         MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
+                         KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))

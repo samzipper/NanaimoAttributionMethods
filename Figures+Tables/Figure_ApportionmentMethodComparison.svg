@@ -24,6 +24,18 @@
      id="defs4">
     <inkscape:path-effect
        effect="spiro"
+       id="path-effect4571"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4567"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4563"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
        id="path-effect4603"
        is_visible="true" />
     <inkscape:path-effect
@@ -704,7 +716,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="2.29"
-     inkscape:cx="292.57202"
+     inkscape:cx="311.68567"
      inkscape:cy="93.324248"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -719,7 +731,8 @@
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="false"
-     showguides="true" />
+     showguides="true"
+     showborder="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -728,7 +741,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -737,36 +750,30 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0.74934291,-133.43271)">
-    <path
-       style="fill:none;fill-opacity:0.3744076;fill-rule:evenodd;stroke:#c5c5c5;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 0,313.7 0,178.72463 90.640394,236.11379 86.391905,259.59228 8.2897896,313.7 0,313.7 Z"
-       id="path4452"
-       inkscape:path-effect="#path-effect4454"
-       inkscape:original-d="M 0,313.7 0,178.72463 90.640394,236.11379 86.391905,259.59228 8.2897896,313.7 Z"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#c5c5c5;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:0.37254903"
-       d="M 8.1690632,313.81935 86.537185,259.5499 128.66242,313.43984 8.1690632,313.81935 Z"
-       id="path4576"
-       inkscape:path-effect="#path-effect4578"
-       inkscape:original-d="M 8.1690632,313.81935 86.537185,259.5499 128.66242,313.43984 Z"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;fill-opacity:0.37254902;fill-rule:evenodd;stroke:#c5c5c5;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m -0.24937343,134.02433 0,44.3609 90.72681743,57.64411 95.238096,-58.39599 0,-43.60902 -185.96491343,0 z"
-       id="path5705"
-       inkscape:path-effect="#path-effect5707"
-       inkscape:original-d="m -0.24937343,134.02433 0,44.3609 90.72681743,57.64411 95.238096,-58.39599 0,-43.60902 z"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;fill-opacity:0.3744076;fill-rule:evenodd;stroke:#c5c5c5;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 185.71429,313.7 0,-136.2069 -95.073896,58.37439 -4.172236,23.88601 42.004642,53.81728 57.24149,0.12922 z"
-       id="path4460"
-       inkscape:path-effect="#path-effect4462"
-       inkscape:original-d="m 185.71429,313.7 0,-136.2069 -95.073896,58.37439 -4.172236,23.88601 42.004642,53.81728 z"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
+    <g
+       id="g4573">
+      <path
+         inkscape:connector-curvature="0"
+         inkscape:original-d="M 8.5238401,313.56492 86.218076,259.93083 90.729354,235.62005 0.25316339,178.22657"
+         inkscape:path-effect="#path-effect4563"
+         id="path4560"
+         d="M 8.5238401,313.56492 86.218076,259.93083 90.729354,235.62005 0.25316339,178.22657"
+         style="fill:none;fill-rule:evenodd;stroke:#a3a3a3;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         inkscape:original-d="m 86.468702,259.6802 42.105268,53.63409"
+         inkscape:path-effect="#path-effect4567"
+         id="path4565"
+         d="m 86.468702,259.6802 42.105268,53.63409"
+         style="fill:none;fill-rule:evenodd;stroke:#a3a3a3;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         inkscape:original-d="M 90.478727,235.36943 185.4662,177.72532"
+         inkscape:path-effect="#path-effect4571"
+         id="path4569"
+         d="M 90.478727,235.36943 185.4662,177.72532"
+         style="fill:none;fill-rule:evenodd;stroke:#a3a3a3;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -780,7 +787,7 @@
          y="145.57657"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(a) <tspan
    style="fill:#3cb44b;fill-opacity:1"
-   id="tspan4505">Thiessen Polygon</tspan></tspan></text>
+   id="tspan4505">Thiessen Polygon (Eq. 1)</tspan></tspan></text>
     <circle
        style="opacity:1;fill:#d01d1d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4910"
@@ -897,7 +904,7 @@
          y="145.57657"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial">(b) <tspan
    style="fill:#c9b316;fill-opacity:1"
-   id="tspan4511">Inverse Distance</tspan></tspan><tspan
+   id="tspan4511">Inverse Distance (Eq. 2)</tspan></tspan><tspan
          sodipodi:role="line"
          x="189.94991"
          y="158.07657"
@@ -984,7 +991,7 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial"
          id="tspan4685">(c) <tspan
    style="fill:#e6194b;fill-opacity:1"
-   id="tspan4687">Web</tspan></tspan></text>
+   id="tspan4687">Web (Eq. 4)</tspan></tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#2d8989;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 409.00246,204.83781 c 13.05028,-32.18602 53.95606,-7.95605 73,-27 3.3947,-3.39469 6.16202,-17.08101 10,-19 19.24117,-9.62058 19.35396,2.58416 26,-24"
@@ -2091,7 +2098,12 @@
          id="tspan4691"
          x="204.92751"
          y="156.39561"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:arial;-inkscape-font-specification:arial;fill:#f58231;fill-opacity:1">Inv. Distance Squared</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:arial;-inkscape-font-specification:arial;fill:#f58231;fill-opacity:1">Inv. Distance Squared</tspan><tspan
+         sodipodi:role="line"
+         x="204.92751"
+         y="168.89561"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:arial;-inkscape-font-specification:arial;fill:#f58231;fill-opacity:1"
+         id="tspan4559">   (Eq. 3)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -2103,7 +2115,7 @@
          id="tspan4691-5"
          x="392.2121"
          y="156.39561"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:arial;-inkscape-font-specification:arial;fill:#0082c8;fill-opacity:1">Web Squared</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:arial;-inkscape-font-specification:arial;fill:#0082c8;fill-opacity:1">Web Squared (Eq. 5)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

@@ -126,17 +126,17 @@ p <- rbind(p1, p2, size="first")
 p$widths <- unit.pmax(p1$widths, p2$widths)
 
 # save output
-ggsave(paste0(dir.fig, "Figure_Sensitivity_Elev+Recharge.png"),
-       ggtern::arrangeGrob(p, 
-                           p.recharge.fit.ByScenario.tern.facet + guides(color="none", size="none") + 
-                             theme(plot.margin=margin(-8,0,-5,10, "mm"),
-                                   tern.axis.arrow.sep=0.15,
-                                   tern.axis.vshift=0.1),
-                           recharge.legend,
-                           ncol=1, heights=c(3, 1.5, 0.4)),
-       width=190, height=156, units="mm", dpi=300)
+# ggsave(paste0(dir.fig, "Figure_Sensitivity_Elev+Recharge.png"),
+#        ggtern::arrangeGrob(p, 
+#                            p.recharge.fit.ByScenario.tern.facet + guides(color="none", size="none") + 
+#                              theme(plot.margin=margin(-8,0,-5,10, "mm"),
+#                                    tern.axis.arrow.sep=0.15,
+#                                    tern.axis.vshift=0.1),
+#                            recharge.legend,
+#                            ncol=1, heights=c(3, 1.5, 0.4)),
+#        width=190, height=156, units="mm", dpi=300)
 
-ggsave(paste0(dir.fig, "Figure_Sensitivity_Elev+Recharge.pdf"),
+ggsave(paste0(dir.fig, "Figure_Sensitivity_Elev+Recharge_NoText.pdf"),
        ggtern::arrangeGrob(p, 
                            p.recharge.fit.ByScenario.tern.facet + guides(color="none", size="none") + 
                              theme(plot.margin=margin(-8,0,-5,10, "mm"),
