@@ -47,31 +47,48 @@ df.fit.ByScenario <- summarize(group_by(df.prc, drainage.density, topography, re
                                MSE.overall = MSE(depletion.prc, depletion.prc.modflow),
                                KGE.overall = KGE(depletion.prc, depletion.prc.modflow, method="2012"))
 
+# subset for plotting
+df.plot <- subset(df.prc, drainage.density=="LD" & recharge %in% c("NORCH", "RCH10", "RCH100", "RCH1000"))
+df.fit.plot <- subset(df.fit.ByScenario, drainage.density=="LD" & recharge %in% c("NORCH", "RCH10", "RCH100", "RCH1000"))
+
+# add column for facetting
+df.plot$topo_recharge <- paste0(df.plot$topography, "_", df.plot$recharge)
+df.plot$topo_recharge <- factor(df.plot$topo_recharge, levels=c("FLAT_NORCH", "ELEV_NORCH", "ELEV_RCH10", "ELEV_RCH100", "ELEV_RCH1000"))
+df.fit.plot$topo_recharge <- paste0(df.fit.plot$topography, "_", df.fit.plot$recharge)
+df.fit.plot$topo_recharge <- factor(df.fit.plot$topo_recharge, levels=c("FLAT_NORCH", "ELEV_NORCH", "ELEV_RCH10", "ELEV_RCH100", "ELEV_RCH1000"))
+
 ## plots
 p.recharge.ByScenario.scatter <-
-  ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV" & recharge %in% c("NORCH", "RCH10", "RCH100", "RCH1000")), aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
+  ggplot(df.plot, aes(x=depletion.prc, y=depletion.prc.modflow, color=method)) +
   geom_abline(slope=1, intercept=0, color="gray65") +
   geom_hline(yintercept=0, color="gray65") +
   geom_point(shape=21, alpha=0.5) +
   stat_smooth(method="lm", se=F) +
-  facet_wrap(~recharge, ncol=4, scales="free",
-             labeller=as_labeller(c("NORCH"="(a) 0 mm recharge", "RCH10"="(b) 10 mm recharge", 
-                                    "RCH100"="(c) 100 mm recharge", "RCH1000"="(d) 1000 mm recharge"))) +
+  facet_wrap(~topo_recharge, ncol=5, scales="free",
+             labeller=as_labeller(c("FLAT_NORCH"="(a) Flat + 0 mm Recharge", 
+                                    "ELEV_NORCH"="(b) Relief + 0 mm", 
+                                    "ELEV_RCH10"="(c) Relief + 10 mm", 
+                                    "ELEV_RCH100"="(d) Relief + 100 mm", 
+                                    "ELEV_RCH1000"="(e) Relief + 1000 mm"))) +
   scale_x_continuous(name="Analytical Depletion [%]", breaks=seq(0,100,25), limits=c(0,100)) +
   scale_y_continuous(name="MODFLOW Depletion [%]", 
-                     limits=c(min(subset(df.prc, drainage.density=="LD" & topography=="ELEV")$depletion.prc.modflow), 
-                              max(subset(df.prc, drainage.density=="LD" & topography=="ELEV")$depletion.prc.modflow))) +
+                     limits=c(min(df.plot$depletion.prc.modflow), 
+                              max(df.plot$depletion.prc.modflow))) +
   scale_color_manual(name="Method", values=pal.method) +
   theme_scz() +
   theme(legend.position="bottom",
         strip.background=element_blank())
 
 p.recharge.depletion.diff.dens.noZeros <-
-  ggplot(subset(df.prc, drainage.density=="LD" & topography=="ELEV" & recharge %in% c("NORCH", "RCH10", "RCH100", "RCH1000")), aes(x=depletion.diff.prc, fill=method, color=method)) +
+  ggplot(df.plot, aes(x=depletion.diff.prc, fill=method, color=method)) +
   geom_density(alpha=0.2) +
   geom_vline(xintercept=0) +
-  facet_wrap(~recharge, scales="free", ncol=4, labeller=as_labeller(c("NORCH"="(e) 0 mm recharge", "RCH10"="(f) 10 mm recharge", 
-                                                                      "RCH100"="(g) 100 mm recharge", "RCH1000"="(h) 1000 mm recharge"))) +
+  facet_wrap(~topo_recharge, ncol=5, scales="free",
+             labeller=as_labeller(c("FLAT_NORCH"="(f) Flat + 0 mm Recharge", 
+                                    "ELEV_NORCH"="(g) Relief + 0 mm", 
+                                    "ELEV_RCH10"="(h) Relief + 10 mm", 
+                                    "ELEV_RCH100"="(i) Relief + 100 mm", 
+                                    "ELEV_RCH1000"="(j) Relief + 1000 mm"))) +
   scale_x_continuous(name="Analytical - MODFLOW Depletion [%]") +
   scale_y_continuous(name="Density") +
   scale_fill_manual(name="Method", values=pal.method) +
@@ -81,15 +98,18 @@ p.recharge.depletion.diff.dens.noZeros <-
         strip.background=element_blank())
 
 p.recharge.fit.ByScenario.tern.facet <-
-  ggtern(subset(df.fit.ByScenario, drainage.density=="LD" & topography=="ELEV" & recharge %in% c("NORCH", "RCH10", "RCH100", "RCH1000")), 
+  ggtern(df.fit.plot, 
          aes(x=MSE.bias.norm, y=MSE.var.norm, z=MSE.cor.norm, size=KGE.overall, color=method)) +
   geom_point() +
-  facet_wrap(~recharge, ncol=4, labeller=as_labeller(c("NORCH"="(i) 0 mm recharge", "RCH10"="(j) 10 mm recharge", 
-                                                       "RCH100"="(k) 100 mm recharge", "RCH1000"="(l) 1000 mm recharge"))) +
+  facet_wrap(~topo_recharge, ncol=5, scales="free",
+             labeller=as_labeller(c("FLAT_NORCH"="(l) Flat + 0 mm Recharge", 
+                                    "ELEV_NORCH"="(m) Relief + 0 mm", 
+                                    "ELEV_RCH10"="(n) Relief + 10 mm", 
+                                    "ELEV_RCH100"="(o) Relief + 100 mm", 
+                                    "ELEV_RCH1000"="(p) Relief + 1000 mm"))) +
   labs(x="% Bias", y="% Variability", z="% Correlation") +
   scale_color_manual(name="Method", values=pal.method, labels=labels.method) +
-  scale_size_continuous(name="KGE", breaks=seq(0,0.5,0.25), limits=c(0,0.6)) +
-#  theme_rgbw() +
+  scale_size_continuous(name="KGE", breaks=seq(0,0.75,0.25)) +
   theme_custom(col.T = "darkred", 
                col.L = "darkblue", 
                col.R = "darkgreen") +
@@ -139,9 +159,9 @@ p$widths <- unit.pmax(p1$widths, p2$widths)
 ggsave(paste0(dir.fig, "Figure_Sensitivity_Elev+Recharge_NoText.pdf"),
        ggtern::arrangeGrob(p, 
                            p.recharge.fit.ByScenario.tern.facet + guides(color="none", size="none") + 
-                             theme(plot.margin=margin(-8,0,-5,10, "mm"),
+                             theme(plot.margin=margin(0,0,2,10, "mm"),
                                    tern.axis.arrow.sep=0.15,
                                    tern.axis.vshift=0.1),
                            recharge.legend,
-                           ncol=1, heights=c(3, 1.5, 0.4)),
-       width=190, height=156, units="mm", device=cairo_pdf)
+                           ncol=1, heights=c(3, 1.2, 0.4)),
+       width=190, height=140, units="mm", device=cairo_pdf)

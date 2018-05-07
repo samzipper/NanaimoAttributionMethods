@@ -10059,9 +10059,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.55"
-     inkscape:cx="227.9348"
-     inkscape:cy="213.90957"
+     inkscape:zoom="3.84"
+     inkscape:cx="259.00616"
+     inkscape:cy="272.49946"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -37013,5 +37013,18 @@
            id="tspan4544-9-0-23-5-4-4"
            sodipodi:role="line">Web Squared</tspan></text>
     </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4542-826-0-29-9"
+       y="139.35033"
+       x="133.69099"
+       style="font-style:normal;font-weight:normal;font-size:17.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"
+       transform="matrix(0.79518985,-0.60636054,0.60636054,0.79518985,0,0)"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:Arial;-inkscape-font-specification:Arial;fill:#a6a6a6;fill-opacity:1"
+         y="139.35033"
+         x="133.69099"
+         id="tspan4544-9-0-23-2"
+         sodipodi:role="line">1:1 line</tspan></text>
   </g>
 </svg>
